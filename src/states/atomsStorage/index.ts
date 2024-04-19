@@ -1,2 +1,2 @@
-export * from './pokeAtoms'
-export * from './countAtom'
+export * from './pokeAtoms';
+export * from './countAtom';

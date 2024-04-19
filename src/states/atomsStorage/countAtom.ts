@@ -1,7 +1,7 @@
-import { atomWithStorage } from "jotai/utils"
+import { atomWithStorage } from 'jotai/utils';
 
-const initialState = 0
+const initialState = 0;
 
-const countAtomStorage = atomWithStorage('count', initialState)
-countAtomStorage.debugLabel = 'count storage atom'
-export default countAtomStorage
+const countAtomStorage = atomWithStorage('count', initialState);
+countAtomStorage.debugLabel = 'count storage atom';
+export default countAtomStorage;
