@@ -7,6 +7,10 @@
 :root {
     --primary-gray: '#ccc';
 }
+html, body {
+    margin: 0;
+    padding: 0;
+}
 /* Mobile */
 .hidden-mobile{
 

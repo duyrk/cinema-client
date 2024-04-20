@@ -97,7 +97,7 @@ export function HeaderMegaMenu({ children }: { children: React.ReactNode }) {
 
   return (
     <Box pb={120}>
-      <header className={classes.header}>
+      <header className={`${classes.header} ${classes.sticky}`}>
         <Group justify="space-between" h="100%">
           {/* <MantineLogo size={30} /> */}
 

@@ -1,0 +1,38 @@
+
+.itemContainer{
+
+}
+.thumnailContainer{
+    overflow: hidden;
+}
+.thumbnail{
+    transition: transform 0.3s ease; 
+}
+.itemContainer:hover .thumnailContainer .thumbnail{
+transform: scale(1.02);
+}
+
+.title{
+    transition: color 0.3s;
+}
+
+.itemContainer:hover .title{
+    color: var(--mantine-color-yellow-5)
+}
+.contentContainer{
+    background-color:transparent
+}
+.contentContainer:hover{
+    background-color: rgba(0, 0, 0, 0.6);
+}
+.content{
+    height: 100%;
+   margin-top: 100%;
+   opacity: 0;
+   transition: all .3s ease-in-out;
+   
+}
+.contentContainer:hover .content{
+opacity: 1;
+margin-top: 50%;
+}

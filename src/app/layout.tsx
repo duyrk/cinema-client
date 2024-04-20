@@ -4,7 +4,7 @@ import '@mantine/core/styles.css';
 import { ColorSchemeScript } from '@mantine/core';
 import { RootProvider } from '@components';
 import '@global/global.css';
-
+import '@mantine/carousel/styles.css';
 export const metadata: Metadata = {
   title: 'Kurosaw Anime',
   description: 'Online Anime Streaming website',
