@@ -40,6 +40,8 @@ export default function PageHome() {
       <FilmItem thumbnail='https://cinestar.com.vn/_next/image/?url=https%3A%2F%2Fapi-website.cinestar.com.vn%2Fmedia%2Fwysiwyg%2FPosters%2F04-2024%2Fcai-gia-cua-hanh-phuc-poster.jpg&w=1920&q=75'/>
       <FilmItem thumbnail='https://cinestar.com.vn/_next/image/?url=https%3A%2F%2Fapi-website.cinestar.com.vn%2Fmedia%2Fwysiwyg%2FPosters%2F04-2024%2Fcai-gia-cua-hanh-phuc-poster.jpg&w=1920&q=75'/>
       <FilmItem thumbnail='https://cinestar.com.vn/_next/image/?url=https%3A%2F%2Fapi-website.cinestar.com.vn%2Fmedia%2Fwysiwyg%2FPosters%2F04-2024%2Fcai-gia-cua-hanh-phuc-poster.jpg&w=1920&q=75'/>
+      <FilmItem thumbnail='https://cinestar.com.vn/_next/image/?url=https%3A%2F%2Fapi-website.cinestar.com.vn%2Fmedia%2Fwysiwyg%2FPosters%2F04-2024%2Fcai-gia-cua-hanh-phuc-poster.jpg&w=1920&q=75'/>
+
       </SimpleGrid>
       </Box>
       <Group justify='center'>
