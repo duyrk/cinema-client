@@ -37,6 +37,8 @@ import classes from '../_styles/HeaderMegaMenu.module.css';
 import React from 'react';
 import Link from 'next/link';
 import AppLogo from './AppLogo';
+import { FooterLinks } from './FooterLinks';
+import ROUTE from '@constants/routes';
 
 const mockdata = [
   {
@@ -96,7 +98,7 @@ export function HeaderMegaMenu({ children }: { children: React.ReactNode }) {
   ));
 
   return (
-    <Box pb={120}>
+    <Box>
       <header className={`${classes.header} ${classes.sticky}`}>
         <Group justify="space-between" h="100%">
           {/* <MantineLogo size={30} /> */}
@@ -104,7 +106,7 @@ export function HeaderMegaMenu({ children }: { children: React.ReactNode }) {
           <Group>
             <AppLogo width="30px" height="30px" />
             <Text size="24px" fw={700}>
-              KMCinema
+              Cinemax
             </Text>
           </Group>
           <Group h="100%" gap={0} visibleFrom="sm">
@@ -184,7 +186,7 @@ export function HeaderMegaMenu({ children }: { children: React.ReactNode }) {
             </ActionIcon>
             <Button variant="default">Đăng ký</Button>
             <Button variant="gradient" gradient={{ from: 'pink', to: 'red', deg: 90 }}>
-              Đăng nhập
+             <Link href={ROUTE.AUTH.LOGIN}>Đăng nhập</Link>
             </Button>
           </Group>
 
@@ -241,6 +243,7 @@ export function HeaderMegaMenu({ children }: { children: React.ReactNode }) {
         </ScrollArea>
       </Drawer>
       <section className={classes.sectionContainer}>{children}</section>
+     <FooterLinks/>
     </Box>
   );
 }

@@ -53,5 +53,5 @@
   .sectionContainer{
     flex:1;
     margin-top: rem(60px);
-
+    position: relative;
   }

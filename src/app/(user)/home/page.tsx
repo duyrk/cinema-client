@@ -35,11 +35,23 @@ export default function PageHome() {
       </Group>
       <Box px={10} mt={20}>
       <SimpleGrid cols={5}>
-      <FilmItem/>
-      <FilmItem/>
-      <FilmItem/>
-      <FilmItem/>
-      <FilmItem/>
+      <FilmItem name='hêyy' thumbnail='https://cinestar.com.vn/_next/image/?url=https%3A%2F%2Fapi-website.cinestar.com.vn%2Fmedia%2Fwysiwyg%2FPosters%2F04-2024%2Fcai-gia-cua-hanh-phuc-poster.jpg&w=1920&q=75'/>
+      <FilmItem thumbnail='https://cinestar.com.vn/_next/image/?url=https%3A%2F%2Fapi-website.cinestar.com.vn%2Fmedia%2Fwysiwyg%2FPosters%2F04-2024%2Fcai-gia-cua-hanh-phuc-poster.jpg&w=1920&q=75'/>
+      <FilmItem thumbnail='https://cinestar.com.vn/_next/image/?url=https%3A%2F%2Fapi-website.cinestar.com.vn%2Fmedia%2Fwysiwyg%2FPosters%2F04-2024%2Fcai-gia-cua-hanh-phuc-poster.jpg&w=1920&q=75'/>
+      <FilmItem thumbnail='https://cinestar.com.vn/_next/image/?url=https%3A%2F%2Fapi-website.cinestar.com.vn%2Fmedia%2Fwysiwyg%2FPosters%2F04-2024%2Fcai-gia-cua-hanh-phuc-poster.jpg&w=1920&q=75'/>
+      <FilmItem thumbnail='https://cinestar.com.vn/_next/image/?url=https%3A%2F%2Fapi-website.cinestar.com.vn%2Fmedia%2Fwysiwyg%2FPosters%2F04-2024%2Fcai-gia-cua-hanh-phuc-poster.jpg&w=1920&q=75'/>
+      </SimpleGrid>
+      </Box>
+      <Group justify='center'>
+        <Text className="text-3xl font-extrabold font-sans" mt={20}>PHIM SẮP CHIẾU</Text>
+      </Group>
+      <Box px={10} mt={20}>
+      <SimpleGrid cols={5}>
+      <FilmItem thumbnail='https://cinestar.com.vn/_next/image/?url=https%3A%2F%2Fapi-website.cinestar.com.vn%2Fmedia%2Fwysiwyg%2FPosters%2F04-2024%2Fcai-gia-cua-hanh-phuc-poster.jpg&w=1920&q=75'/>
+      <FilmItem thumbnail='https://cinestar.com.vn/_next/image/?url=https%3A%2F%2Fapi-website.cinestar.com.vn%2Fmedia%2Fwysiwyg%2FPosters%2F04-2024%2Fcai-gia-cua-hanh-phuc-poster.jpg&w=1920&q=75'/>
+      <FilmItem thumbnail='https://cinestar.com.vn/_next/image/?url=https%3A%2F%2Fapi-website.cinestar.com.vn%2Fmedia%2Fwysiwyg%2FPosters%2F04-2024%2Fcai-gia-cua-hanh-phuc-poster.jpg&w=1920&q=75'/>
+      <FilmItem thumbnail='https://cinestar.com.vn/_next/image/?url=https%3A%2F%2Fapi-website.cinestar.com.vn%2Fmedia%2Fwysiwyg%2FPosters%2F04-2024%2Fcai-gia-cua-hanh-phuc-poster.jpg&w=1920&q=75'/>
+      <FilmItem thumbnail='https://cinestar.com.vn/_next/image/?url=https%3A%2F%2Fapi-website.cinestar.com.vn%2Fmedia%2Fwysiwyg%2FPosters%2F04-2024%2Fcai-gia-cua-hanh-phuc-poster.jpg&w=1920&q=75'/>
       </SimpleGrid>
       </Box>
     </Box>
