@@ -1,16 +1,21 @@
-import { DefaultResponse } from '@services';
-import { IToken, IUser } from '@global/global';
+
 
 // Auth DTO
-
-interface ILoginResponse {
-accessToken: string;
-refreshToken: string;
-message: string;
+interface IUser{
+username: string;
+fullname: string;
+email: string;
+phone:string;
+address: string;
+role: import('../constants/enums').ERole
 }
-
 interface ILoginRequest {
   username: string;
   password: string;
+}
+interface ILoginResponse{
+  accessToken: string;
+  refreshToken: string;
+  data: IUser
 }
 //   Auth DTO

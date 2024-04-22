@@ -1,5 +1,5 @@
-import { WretchInstance } from '@utils';
-import { ILoginRequest, ILoginResponse } from './service';
+
+import ApiUtil from '@utils/AxiosInstance';
 
 export const AuthServiceEndpoint = {
   login: 'auth/login',
@@ -7,7 +7,7 @@ export const AuthServiceEndpoint = {
 };
 
 export const AuthService = {
-  login: async (body: ILoginRequest) => {
-    return WretchInstance.post<ILoginRequest, ILoginResponse>(AuthServiceEndpoint.login, body);
-  },
-} as const;
+  login: async (body: ILoginRequest)=>{
+      return ApiUtil.post<ILoginResponse>(AuthServiceEndpoint.login, body)
+  }
+} as const

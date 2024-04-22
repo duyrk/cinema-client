@@ -1,4 +1,4 @@
-import { IToken } from '@global/global';
+
 import { CookieService } from '@services';
 
 export default class AuthUtils {

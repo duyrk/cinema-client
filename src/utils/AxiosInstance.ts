@@ -35,7 +35,7 @@ const AxiosInstance = ({ contentType = 'application/json', headers }: AxiosInsta
         config.headers = headers;
       } else {
         config.headers = {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token ?? ''}`,
           Accept: 'application/json',
           'Content-Type': contentType,
         } as AxiosRequestHeaders;
@@ -51,7 +51,7 @@ const AxiosInstance = ({ contentType = 'application/json', headers }: AxiosInsta
     async (error) => {
       const originalConfig = error.config;
 
-      if (error?.response?.status === 403 && !originalConfig._retry && !isRefreshToken) {
+      if (error?.response?.status === 401 && !originalConfig._retry && !isRefreshToken) {
         originalConfig._retry = true;
         isRefreshToken = true;
 
