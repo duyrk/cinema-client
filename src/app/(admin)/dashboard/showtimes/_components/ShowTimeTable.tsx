@@ -1,8 +1,12 @@
 import cx from 'clsx';
 import { useState } from 'react';
-import { Table, ScrollArea } from '@mantine/core';
+import { Table, ScrollArea, Box } from '@mantine/core';
 import classes from '../_styles/TableScrollArea.module.css';
 import { Button, Menu, Text, rem, useMantineTheme } from '@mantine/core';
+import { useForm } from '@mantine/form';
+import { NumberInput, TextInput} from '@mantine/core';
+import { DateTimePicker } from '@mantine/dates';
+
 
 import {
   IconChevronDown,
@@ -82,6 +86,58 @@ export default function TableScrollArea() {
     const [scrolled, setScrolled] = useState(false);
     const theme = useMantineTheme();
 
+    const form = useForm({
+      mode: 'uncontrolled',
+      initialValues: {timeStart: '', timeEnd: '', status: 0, movieId: 0, roomId: 0},
+  
+      // functions will be used to validate values at corresponding key
+      validate: {
+        timeStart: (value) => {
+            if (!value) return 'Release Date is required';
+            const selectedDate = new Date(value);
+            const today = new Date();
+            if (selectedDate < today) {
+              return 'Release Date must be after or today';
+            }
+            return null; 
+          },
+      
+          timeEnd: (value, values) => {
+            if (!value) return 'End Date is required';
+            if (!values.timeStart) return 'Please select Release Date first';
+            const selectedtimeEnd = new Date(value);
+            const selectedtimeStart = new Date(values.timeStart);
+            if (selectedtimeEnd <= selectedtimeStart) {
+              return 'End Date must be after Release Date';
+            }
+            return null; 
+          },
+
+          status: (value) => {
+            if (value !== 0 && value !== 1) {
+              return 'Status must be either 0 or 1';
+            }
+            return null; 
+          },
+          movieId: (value) => {
+            if (value === 0) {
+              return 'movieId must not be 0';
+            }
+            return null; 
+          },
+          roomId: (value) => {
+            if (value === 0) {
+              return 'roomId must not be 0';
+            }
+            return null; 
+          },
+      },
+    });
+    const handleReset = () => {
+        // Gọi phương thức reset của đối tượng form
+        form.reset();
+      };
+
     const rows = data.map((row) => (
       <Table.Tr key={row.showTimeId}>
       <Table.Td>{row.showTimeId}</Table.Td>
@@ -144,21 +200,68 @@ export default function TableScrollArea() {
     ));
   
     return (
-      <ScrollArea miw={300} h={350} onScrollPositionChange={({ y }) => setScrolled(y !== 0)}>
-        <Table miw={700}>
-          <Table.Thead className={cx(classes.header, { [classes.scrolled]: scrolled })}>
-            <Table.Tr>
-              <Table.Th>Id</Table.Th>
-              <Table.Th>timeStart</Table.Th>
-              <Table.Th>timeEnd</Table.Th>
-              <Table.Th>status</Table.Th>
-              <Table.Th>movieId</Table.Th>
-              <Table.Th>roomId</Table.Th>
-              <Table.Th>Action</Table.Th>
-            </Table.Tr>
-          </Table.Thead>
-          <Table.Tbody>{rows}</Table.Tbody>
-        </Table>
-      </ScrollArea>
+      <Box>
+        <ScrollArea miw={300} h={350} onScrollPositionChange={({ y }) => setScrolled(y !== 0)}>
+      <Table miw={700}>
+        <Table.Thead className={cx(classes.header, { [classes.scrolled]: scrolled })}>
+          <Table.Tr>
+            <Table.Th>Id</Table.Th>
+            <Table.Th>timeStart</Table.Th>
+            <Table.Th>timeEnd</Table.Th>
+            <Table.Th>status</Table.Th>
+            <Table.Th>movieId</Table.Th>
+            <Table.Th>roomId</Table.Th>
+            <Table.Th>Action</Table.Th>
+          </Table.Tr>
+        </Table.Thead>
+        <Table.Tbody>{rows}</Table.Tbody>
+      </Table>
+    </ScrollArea>
+    <ScrollArea style={{ 
+            justifyContent: 'center',
+            alignItems: 'center',}
+    } miw={200} h={350} onScrollPositionChange={({ y }) => setScrolled(y !== 0)}>
+            <form  onSubmit={form.onSubmit(console.log)}>
+        <TextInput ml="sm" mt="lg" label="Id" placeholder="Id" readOnly />
+        <DateTimePicker withSeconds ml="sm" mt="sm" mr ="lg" label="TimeStart" placeholder="Pick date and time" {...form.getInputProps('timeStart')} />
+        <DateTimePicker withSeconds ml="sm" mt="sm" mr ="lg" label="TimeEnd" placeholder="Pick date and time" {...form.getInputProps('timeEnd')}/>
+        <NumberInput
+          mt="sm"
+          ml="sm"
+          mr="lg"
+          label="Status"
+          placeholder="Status"
+          min={0}
+          max={1}
+          {...form.getInputProps('status')}
+        />
+        <NumberInput
+          mt="sm"
+          ml="sm"
+          mr="lg"
+          label="MovieId"
+          placeholder="MovieId"
+          min={1}
+          {...form.getInputProps('movieId')}
+        />
+        <NumberInput
+          mt="sm"
+          ml="sm"
+          mr="lg"
+          label="RoomId"
+          placeholder="RoomId"
+          min={1}
+          {...form.getInputProps('roomId')}
+        />
+        <Button color='cyan' ml="sm" mt="lg" mb="lg" type="submit">
+          Submit
+        </Button>
+        <Button color='blue' ml="sm" mt="lg" mb="lg" type="reset" onClick={handleReset}>
+          Reset
+        </Button>
+        </form>
+        </ScrollArea>
+    </Box>
+      
     );
   }

@@ -22,7 +22,7 @@ import classes from '../_styles/NavbarSimple.module.css';
 import AppLogo from '@app/(user)/_components/AppLogo';
 
 const data = [
-  { link: '', label: 'Phim', icon: IconMovie },
+  { link: '/dashboard/movies', label: 'Phim', icon: IconMovie },
   { link: '', label: 'Xuất chiếu', icon: IconClockPlay },
   { link: '', label: 'Phòng', icon: IconDoorEnter },
   { link: '', label: 'Ghế', icon: IconArmchair2 },
@@ -40,7 +40,7 @@ export function NavbarSimple({ children }: { children: React.ReactNode }) {
       href={item.link}
       key={item.label}
       onClick={(event) => {
-        event.preventDefault();
+        // event.preventDefault();
         setActive(item.label);
       }}
     >

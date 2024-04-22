@@ -1,9 +1,10 @@
 import cx from 'clsx';
 import { useState } from 'react';
-import { Table, ScrollArea } from '@mantine/core';
+import { Table, ScrollArea, Box } from '@mantine/core';
 import classes from '../_styles/TableScrollArea.module.css';
 import { Button, Menu, Text, rem, useMantineTheme } from '@mantine/core';
-
+import { useForm } from '@mantine/form';
+import { NumberInput, TextInput } from '@mantine/core';
 import {
   IconChevronDown,
   IconHttpDelete,
@@ -28,6 +29,25 @@ const data =  [
 export default function TableScrollArea() {
     const [scrolled, setScrolled] = useState(false);
     const theme = useMantineTheme();
+
+    const form = useForm({
+      mode: 'uncontrolled',
+      initialValues: {status: 0, roomType: ''},
+      
+      validate: {
+        roomType: (value) => (value.length < 2 ? 'roomType must have at least 2 letters' : null),
+          status: (value) => {
+            if (value !== 0 && value !== 1 && value !== 2) {
+              return 'Status must be either 0,1 or 2';
+            }
+            return null; 
+          },
+      },
+    });
+    const handleReset = () => {
+        // Gọi phương thức reset của đối tượng form
+        form.reset();
+      };
 
     const rows = data.map((row) => (
       <Table.Tr key={row.roomId} >
@@ -89,7 +109,8 @@ export default function TableScrollArea() {
     ));
   
     return (
-      <ScrollArea miw={300} h={350} onScrollPositionChange={({ y }) => setScrolled(y !== 0)}>
+      <Box>
+        <ScrollArea miw={300} h={350} onScrollPositionChange={({ y }) => setScrolled(y !== 0)}>
         <Table miw={700}>
           <Table.Thead className={cx(classes.header, { [classes.scrolled]: scrolled })}>
             <Table.Tr>
@@ -103,5 +124,42 @@ export default function TableScrollArea() {
           <Table.Tbody>{rows}</Table.Tbody>
         </Table>
       </ScrollArea>
+      <ScrollArea style={{ 
+            justifyContent: 'center',
+            alignItems: 'center',}
+    } miw={200} h={350} onScrollPositionChange={({ y }) => setScrolled(y !== 0)}>
+            <form  onSubmit={form.onSubmit(console.log)}>
+        <TextInput ml="sm" mt="lg" label="Id" placeholder="Id" readOnly mr="lg" />
+        <NumberInput
+          mt="sm"
+          ml="sm"
+          mr="lg"
+          label="Status"
+          placeholder="Status"
+          min={0}
+          max={1}
+          {...form.getInputProps('status')}
+        />
+        <NumberInput
+          mt="sm"
+          ml="sm"
+          mr="lg"
+          label="SeatQuantity"
+          placeholder="SeatQuantity"
+          min={0}
+          max={1}
+          readOnly
+        />
+        <TextInput ml="sm" mt="lg" mr="lg" label="roomType" placeholder="roomType" readOnly {...form.getInputProps('roomType')}/>
+        <Button color='cyan' ml="sm" mt="lg" mb="lg" type="submit">
+          Submit
+        </Button>
+        <Button color='blue' ml="sm" mt="lg" mb="lg" type="reset" onClick={handleReset}>
+          Reset
+        </Button>
+        </form>
+        </ScrollArea>
+      </Box>
+      
     );
   }
