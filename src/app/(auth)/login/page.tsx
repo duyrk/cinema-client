@@ -15,7 +15,7 @@ import {
   TextInput,
   Title,
 } from '@mantine/core';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useForm } from '@mantine/form';
 import { useMutation } from '@tanstack/react-query';
 import { joiResolver } from 'mantine-form-joi-resolver';
@@ -75,11 +75,14 @@ export default function LoginPage() {
     },
     validate: joiResolver(LoginSchema),
   });
-
+const [isUpdate, setIsUpdate] = useState(false)
   const handleSubmit = (body: ILoginRequest) => {
+
     mutate(body);
   };
-
+const fillUpdateForm = (username: string, password: string)=>{
+  loginForm.setValues({username: username, password: password})
+}
   return (
     <Container size={420} pt={30}>
       <Center mb={20}>

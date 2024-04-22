@@ -34,7 +34,7 @@ export default function PageHome() {
         <Text className="text-3xl font-extrabold font-sans" mt={20}>PHIM ĐANG CHIẾU</Text>
       </Group>
       <Box px={10} mt={20}>
-      <SimpleGrid cols={5}>
+      <SimpleGrid cols={{base:2, sm:2, md:4,lg:5}}>
       <FilmItem name='hêyy' thumbnail='https://cinestar.com.vn/_next/image/?url=https%3A%2F%2Fapi-website.cinestar.com.vn%2Fmedia%2Fwysiwyg%2FPosters%2F04-2024%2Fcai-gia-cua-hanh-phuc-poster.jpg&w=1920&q=75'/>
       <FilmItem thumbnail='https://cinestar.com.vn/_next/image/?url=https%3A%2F%2Fapi-website.cinestar.com.vn%2Fmedia%2Fwysiwyg%2FPosters%2F04-2024%2Fcai-gia-cua-hanh-phuc-poster.jpg&w=1920&q=75'/>
       <FilmItem thumbnail='https://cinestar.com.vn/_next/image/?url=https%3A%2F%2Fapi-website.cinestar.com.vn%2Fmedia%2Fwysiwyg%2FPosters%2F04-2024%2Fcai-gia-cua-hanh-phuc-poster.jpg&w=1920&q=75'/>
@@ -48,7 +48,7 @@ export default function PageHome() {
         <Text className="text-3xl font-extrabold font-sans" mt={20}>PHIM SẮP CHIẾU</Text>
       </Group>
       <Box px={10} mt={20}>
-      <SimpleGrid cols={5}>
+      <SimpleGrid cols={{base:2, sm:2, md:4,lg:5}}>
       <FilmItem thumbnail='https://cinestar.com.vn/_next/image/?url=https%3A%2F%2Fapi-website.cinestar.com.vn%2Fmedia%2Fwysiwyg%2FPosters%2F04-2024%2Fcai-gia-cua-hanh-phuc-poster.jpg&w=1920&q=75'/>
       <FilmItem thumbnail='https://cinestar.com.vn/_next/image/?url=https%3A%2F%2Fapi-website.cinestar.com.vn%2Fmedia%2Fwysiwyg%2FPosters%2F04-2024%2Fcai-gia-cua-hanh-phuc-poster.jpg&w=1920&q=75'/>
       <FilmItem thumbnail='https://cinestar.com.vn/_next/image/?url=https%3A%2F%2Fapi-website.cinestar.com.vn%2Fmedia%2Fwysiwyg%2FPosters%2F04-2024%2Fcai-gia-cua-hanh-phuc-poster.jpg&w=1920&q=75'/>
