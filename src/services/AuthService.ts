@@ -1,5 +1,5 @@
 import { WretchInstance } from '@utils';
-import { ILoginRequest, ILoginResponse } from './service';
+// import { ILoginRequest, ILoginResponse } from './service';
 
 export const AuthServiceEndpoint = {
   login: 'auth/login',

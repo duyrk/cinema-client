@@ -1,38 +1,19 @@
 import cx from 'clsx';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Table, ScrollArea, Box} from '@mantine/core';
 import classes from '../_styles/TableScrollArea.module.css';
 import { Button, Menu, Text, rem, useMantineTheme } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { NumberInput, TextInput} from '@mantine/core';
 import { DateTimePicker } from '@mantine/dates';
-
+import { ChangeEvent } from 'react';
 import {
   IconChevronDown,
   IconHttpDelete,
   IconHttpPut,
 } from '@tabler/icons-react';
-
-
-const data = [
-    {
-      movieId: 1,
-      movieName: "NGÀY TÀN CỦA ĐẾ QUỐC-T18",
-      movieGenre: "Hành động",
-      description: "Trong một tương lai gần, một nhóm các phóng viên chiến trường quả cảm phải đấu tranh với thời gian và bom đạn nguy hiểm để đến kịp Nhà Trắng giữa bối cảnh nội chiến Hoa Kỳ đang tiến đến cao trào.",
-      duration: "1h 49m",
-      director: "Alex Garland",
-      actor: "Kirsten Dunst, Wagner Moura, Cailee Spaeny",
-      releaseDate: "2024-04-20 00:00:00",
-      endDate: "2024-05-20 00:00:00",
-      ageRestriction: "T18 - PHIM ĐƯỢC PHỔ BIẾN ĐẾN NGƯỜI XEM TỪ ĐỦ 18 TUỔI TRỞ LÊN",
-      urlTrailer: "https://www.youtube.com/embed/QGlgPf9jGMA?si=eudU9myRkAUs4AxC",
-      status: 1,
-      urlThumbnail: "https://chieuphimquocgia.com.vn/_next/image?url=http%3A%2F%2Fapiv2.chieuphimquocgia.com.vn%2FContent%2FImages%2F0017504_0.jpg&w=256&q=75"
-    }
-    
-  ];
-
+import { MovieService } from '@services/MovieService';
+import formData from 'wretch/addons/formData';
   interface Row {
     movieId: number;
     movieName: string;
@@ -52,14 +33,28 @@ const data = [
 
 export default function TableScrollArea() {
     const [scrolled, setScrolled] = useState(false);
+    const [createFrom, setForm] = useState({});
     const theme = useMantineTheme();
-
     const [isUpdate, setUpdate] = useState(false);
+    const [movies, setMovies] = useState<IMovieResponse>();
+    const [addMovie, setAddMovie] = useState<IMovieRequest>();
+    useEffect(() => {
+      fetchMovies();
+  }, []);
+
+  const fetchMovies = async () => {
+    try {
+        const moviesResponse = await MovieService.getAllMovie();
+        setMovies(moviesResponse.data);
+    } catch (error) {
+        console.error("Đã xảy ra lỗi khi lấy dữ liệu phim:", error);
+    }
+};
+
+
     const form = useForm({
       mode: 'uncontrolled',
       initialValues: {id: 0, name: '', description: '',genre: '', duration: '', director: '', actor: '', releaseDate: '', endDate: '', ageRestriction: '', trailer: '', status: 0, thumbnail: ''},
-  
-      // functions will be used to validate values at corresponding key
       validate: {
         name: (value) => (value.length < 2 ? 'Name must have at least 2 letters' : null),
         description: (value) => (value.length < 2 ? 'Description must have at least 2 letters' : null),
@@ -104,9 +99,19 @@ export default function TableScrollArea() {
 
         form.reset();
       };
-
-      
-
+      const handleDateTimeChange = (name: string) => (date: Date | null) => {
+        setForm({
+          ...formData,
+          [name]: date ? date.toISOString() : '', // Convert date to ISO string format
+        });
+      };
+      const handleNumberChange = (event: ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = event.target;
+        setForm({
+          ...formData,
+          [name]: parseInt(value), // Convert value to integer
+        });
+      };
       const handleTableRowClick = (row: Row) => {
         setUpdate(true);
         const releaseDate = new Date(row.releaseDate);
@@ -129,7 +134,7 @@ export default function TableScrollArea() {
 
       };
 
-    const rows = data.map((row) => (
+    const rows = movies?.data.map((row) => (
         <Table.Tr key={row.movieId}>
         <Table.Td>{row.movieId}</Table.Td>
         <Table.Td>{row.movieName}</Table.Td>

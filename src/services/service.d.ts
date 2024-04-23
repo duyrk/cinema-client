@@ -1,16 +1,60 @@
-import { DefaultResponse } from '@services';
-import { IToken, IUser } from '@global/global';
+// import { DefaultResponse } from '@services';
+// import { IToken, IUser } from '@global/global';
 
 // Auth DTO
 
-interface ILoginResponse {
-accessToken: string;
-refreshToken: string;
-message: string;
+interface IUser{
+  refreshToken: string;	username: string;
+  message: string;	fullname: string;
+  email: string;
+  phone:string;
+  address: string;
+  role: import('../constants/enums').ERole
+  }
+
+
+  interface ILoginRequest {
+    username: string;
+    password: string;
+  }
+
+interface ILoginResponse{
+  accessToken: string;
+  refreshToken: string;
+  data: IUser
 }
 
-interface ILoginRequest {
-  username: string;
-  password: string;
+//Movie DTO
+interface IMovie{
+  movieId: number;
+  movieName: string;
+  movieGenre: string;
+  description: string;
+  duration: string;
+  director: string;
+  actor: string;
+  releaseDate: string;
+  endDate: string;
+  ageRestriction: string
+  urlTrailer: string;
+  status: number;
+  urlThumbnail: string;
 }
-//   Auth DTO
+interface IMovieResponse{
+  data :IMovie[]
+}
+
+interface IMovieRequest{
+  movieName: string;
+  movieGenre: string;
+  description: string;
+  duration: string;
+  director: string;
+  actor: string;
+  releaseDate: string;
+  endDate: string;
+  ageRestriction: string
+  urlTrailer: string;
+  status: number;
+  urlThumbnail: string;
+}

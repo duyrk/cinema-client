@@ -21,5 +21,6 @@ const pattern = {
 export const LoginSchema = JoiInstance.object({
   username: JoiInstance.string().min(1).required(),
   // .messages({ 'string.min': 'Username must have at least one character', 'string.requi' }),
-  password: JoiInstance.string().min(8).custom(pattern.password).required(),
+  //password: JoiInstance.string().min(8).custom(pattern.password).required(),
+  password: JoiInstance.string().min(6).required(),
 });

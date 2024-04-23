@@ -1,7 +1,7 @@
 'use client';
 
 import {
-    Box,
+  Box,
   Button,
   Center,
   Container,
@@ -15,15 +15,14 @@ import {
   TextInput,
   Title,
 } from '@mantine/core';
-import { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useForm } from '@mantine/form';
 import { useMutation } from '@tanstack/react-query';
 import { joiResolver } from 'mantine-form-joi-resolver';
 import { IconLock, IconUserShield } from '@tabler/icons-react';
 
 import { LoginSchema } from './_utils/login.validator';
-import { ILoginRequest } from '@services/service';
-import { AuthService, DefaultResponse } from '@services';
+import { AuthService, DefaultResponse, StorageService, TokenService } from '@services';
 
 import { AuthUtils } from '@utils';
 import { ERole } from '@constants/enums';
@@ -39,33 +38,18 @@ import ROUTE from '@constants/routes';
 
 export default function LoginPage() {
   const routes = useRouter();
-  const [, setUserData] = useLocalStorage<IUser>({
-    key: 'userData',
-  });
+  const [isPending, setIsPending] = React.useState(false);
 
-  const { mutate, isPending, error, isError, data } = useMutation({
-    // mutationFn: AuthService.login,
-    mutationKey: ['login'],
-    onSuccess(data) {
-      //   if (data.data.user.role === ERole.ADMIN) {
-      //     routes.replace('/dashboard');
-      //     // storage user data
-      //     AuthUtils.setTokenData(data.data.token);
-      //     setUserData(data.data.user);
-      //   }
-    },
-  });
-
-  const commonError = useMemo(() => {
-    if (isError) {
-      return (JSON.parse(error.message) as DefaultResponse).message;
-    }
-
-    const userRole = data?.data.user.role;
-    if (userRole) {
-      return userRole === ERole.USER ? 'Account has invalid role' : undefined;
-    }
-  }, [data, isError]);
+  const loginApi = async (body: ILoginRequest) =>{
+    try {
+       const res = await AuthService.login(body)
+      TokenService.setAccessToken(res.data.accessToken)
+      TokenService.setRefreshToken(res.data.refreshToken)
+      console.log('success')
+    } catch (error) {
+      console.log('error' + error)
+    }	    
+  }
 
   const loginForm = useForm({
     name: 'loginForm',
@@ -77,7 +61,8 @@ export default function LoginPage() {
   });
 
   const handleSubmit = (body: ILoginRequest) => {
-    mutate(body);
+    console.log(body)
+    loginApi(body)
   };
 
   return (
@@ -85,7 +70,7 @@ export default function LoginPage() {
       <Center mb={20}>
         <Image src={'./web-icon.png'} w={120} className={styles.app_logo} />
       </Center>
-      <Stack justify='center' align='center'>
+      <Stack justify="center" align="center">
         <AppLogo width="60px" height="60px" />
         <Title ta="center" fw={'bolder'} c={'white'}>
           Cinemax
@@ -107,18 +92,13 @@ export default function LoginPage() {
             mt="md"
             {...loginForm.getInputProps('password')}
           />
-          {commonError ? (
-            <Text mt="md" className={styles.textError}>
-              {commonError}
-            </Text>
-          ) : (
-            <></>
-          )}
-          <Box mt={"sm"} className={styles.signUpSection}>
+          <Box mt={'sm'} className={styles.signUpSection}>
             <Text>Chưa có tài khoản?</Text>
             <Link href={ROUTE.AUTH.REGISTER}>
-            <Text c={'yellow.6'} ml={5}>Đăng ký</Text>
-                </Link>
+            <Text c={'yellow.6'} ml={5}>
+                Đăng ký
+              </Text>
+            </Link>
           </Box>
           <Button
             mt="md"
