@@ -27,6 +27,7 @@ import ROUTE from '@constants/routes';
 import userAtom from '@states/atomsStorage/userAtom';
 import { useAtom } from 'jotai';
 import authAtom from '@states/atomsStorage/authAtom';
+import { ERole } from '@constants';
 export default function LoginPage() {
   const routes = useRouter();
   const [isPending, setIsPending] = React.useState(false);
@@ -41,7 +42,11 @@ export default function LoginPage() {
       TokenService.setRefreshToken(res.data.refreshToken)
       setUSer(res.data.data)
       setIsLogin({isLogin: true})
-      routes.push('/home')
+      if(res.data.data.role === ERole.ADMIN){
+        routes.push('/dashboard/movies')
+      }else{
+        routes.push('/home')
+      }
     } catch (error) {
       console.log('error' + error)
     }

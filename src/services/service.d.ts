@@ -1,40 +1,39 @@
-
 // Auth DTO
-interface IUser{
-username: string;
-fullname: string;
-email: string;
-phone:string;
-address: string;
-role: import('../constants/enums').ERole
+interface IUser {
+  username: string;
+  fullname: string;
+  email: string;
+  phone: string;
+  address: string;
+  role: import('../constants/enums').ERole;
 }
 interface ILoginRequest {
   username: string;
   password: string;
 }
-interface ILoginResponse{
+interface ILoginResponse {
   accessToken: string;
   refreshToken: string;
-  data: IUser
+  data: IUser;
 }
 
-interface IRegisterRequest{
+interface IRegisterRequest {
   userName: string;
   passWord: string;
-  fullName:string;
+  fullName: string;
   email: string;
   phone: string;
   address: string;
 }
-interface IRegisterResponse{
-data: any
-message: string
+interface IRegisterResponse {
+  data: any;
+  message: string;
 }
 
-interface ILogoutRequest{
+interface ILogoutRequest {
   refreshToken: string;
 }
-interface ILogoutResponse{
+interface ILogoutResponse {
   data: any;
   message: string;
 }
@@ -44,29 +43,30 @@ interface ILogoutResponse{
 
 // Auth DTO
 
-interface IUser{
-  refreshToken: string;	username: string;
-  message: string;	fullname: string;
+interface IUser {
+  refreshToken: string;
+  username: string;
+  message: string;
+  fullname: string;
   email: string;
-  phone:string;
+  phone: string;
   address: string;
-  role: import('../constants/enums').ERole
-  }
+  role: import('../constants/enums').ERole;
+}
 
+interface ILoginRequest {
+  username: string;
+  password: string;
+}
 
-  interface ILoginRequest {
-    username: string;
-    password: string;
-  }
-
-interface ILoginResponse{
+interface ILoginResponse {
   accessToken: string;
   refreshToken: string;
-  data: IUser
+  data: IUser;
 }
 
 //Movie DTO
-interface IMovie{
+interface IMovie {
   movieId: number;
   movieName: string;
   movieGenre: string;
@@ -76,16 +76,16 @@ interface IMovie{
   actor: string;
   releaseDate: string;
   endDate: string;
-  ageRestriction: string
+  ageRestriction: string;
   urlTrailer: string;
   status: number;
   urlThumbnail: string;
 }
-interface IMovieResponse{
-  data :IMovie[]
+interface IMovieResponse {
+  data: IMovie[];
 }
 
-interface IMovieRequest{
+interface IMovieRequest {
   movieName: string;
   movieGenre: string;
   description: string;
@@ -94,8 +94,23 @@ interface IMovieRequest{
   actor: string;
   releaseDate: string;
   endDate: string;
-  ageRestriction: string
+  ageRestriction: string;
   urlTrailer: string;
   status: number;
   urlThumbnail: string;
+}
+interface ShowTimes {
+  showTimeId: number;
+  timeStart: string;
+  timeEnd: string;
+  status: number;
+  movieId: number;
+  roomId: number;
+}
+interface IGetMovieByIdResponse {
+  data: {
+    showTimes: ShowTimes[];
+  } & IMovie;
+
+  message: string;
 }
