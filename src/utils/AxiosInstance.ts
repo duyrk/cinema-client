@@ -73,7 +73,7 @@ const AxiosInstance = ({ contentType = 'application/json', headers }: AxiosInsta
             const { accessToken, refreshToken } = parseRes;
             TokenService.setAccessToken(accessToken);
             TokenService.setRefreshToken(refreshToken);
-            originalConfig.headers['Authorization'] = `Bearer ${accessToken}` ?? '';
+            originalConfig.headers['Authorization'] = `Bearer ${accessToken}` ;
             return axiosInstance(originalConfig);
           }
         } catch (e) {
