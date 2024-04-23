@@ -1,6 +1,6 @@
 import cx from 'clsx';
 import { useState } from 'react';
-import { Table, ScrollArea, Box, Alert } from '@mantine/core';
+import { Table, ScrollArea, Box} from '@mantine/core';
 import classes from '../_styles/TableScrollArea.module.css';
 import { Button, Menu, Text, rem, useMantineTheme } from '@mantine/core';
 import { useForm } from '@mantine/form';
@@ -91,12 +91,6 @@ export default function TableScrollArea() {
             return null; 
           },
 
-          id: (value) => {
-            if (value === 0) {
-              return 'Status must not be 0';
-            }
-            return null; 
-          },
           status: (value) => {
             if (value !== 0 && value !== 1) {
               return 'Status must be either 0 or 1';
@@ -259,7 +253,7 @@ export default function TableScrollArea() {
         <TextInput ml="sm" mt="sm" mr="lg" label="Thumbnail" placeholder="Thumbnail" {...form.getInputProps('thumbnail')} />
         
         <Button color={isUpdate ? 'yellow' : 'cyan'} ml="sm" mt="lg" mb="lg" type="submit">
-        {isUpdate ? 'Create' : 'Update'}
+        {isUpdate ? 'Update' : 'Create'}
         </Button>
         <Button color='blue' ml="sm" mt="lg" mb="lg" type="reset" onClick={handleReset}>
           Reset

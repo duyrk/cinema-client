@@ -82,33 +82,43 @@ const data = [
     
 ]
 
+interface Row {
+  showTimeId: number;
+  timeStart: string;
+  timeEnd: string;
+  status: number;
+  movieId: number;
+  roomId: number;
+}
+
 export default function TableScrollArea() {
     const [scrolled, setScrolled] = useState(false);
     const theme = useMantineTheme();
 
+    const [isUpdate, setUpdate] = useState(false);
     const form = useForm({
       mode: 'uncontrolled',
-      initialValues: {timeStart: '', timeEnd: '', status: 0, movieId: 0, roomId: 0},
+      initialValues: {showTimeId: 0,timeStart: '', timeEnd: '', status: 0, movieId: 1, roomId: 1},
   
       // functions will be used to validate values at corresponding key
       validate: {
         timeStart: (value) => {
-            if (!value) return 'Release Date is required';
+            if (!value) return 'Time start is required';
             const selectedDate = new Date(value);
             const today = new Date();
             if (selectedDate < today) {
-              return 'Release Date must be after or today';
+              return 'TimeStart must be after or today';
             }
             return null; 
           },
       
           timeEnd: (value, values) => {
-            if (!value) return 'End Date is required';
-            if (!values.timeStart) return 'Please select Release Date first';
+            if (!value) return 'Time end is required';
+            if (!values.timeStart) return 'Please select Time start first';
             const selectedtimeEnd = new Date(value);
             const selectedtimeStart = new Date(values.timeStart);
             if (selectedtimeEnd <= selectedtimeStart) {
-              return 'End Date must be after Release Date';
+              return 'Time end must be after Time start';
             }
             return null; 
           },
@@ -134,9 +144,25 @@ export default function TableScrollArea() {
       },
     });
     const handleReset = () => {
+      setUpdate(false);
         // Gọi phương thức reset của đối tượng form
         form.reset();
       };
+
+      const handleTableRowClick = (row: Row) => {
+        setUpdate(true);
+        const timeStart = new Date(row.timeStart);
+        const timeEnd = new Date(row.timeEnd);
+        form.setValues({
+          showTimeId: row.showTimeId,
+          timeStart: timeStart, // Chuyển đổi sang kiểu Date
+          timeEnd: timeEnd, // Chuyển đổi sang kiểu Date
+          status: row.status,
+          movieId: row.movieId,
+          roomId: row.roomId
+        })
+      };
+
 
     const rows = data.map((row) => (
       <Table.Tr key={row.showTimeId}>
@@ -175,6 +201,7 @@ export default function TableScrollArea() {
               <Text size="xs" tt="uppercase" fw={700} c="dimmed">
               </Text>
             }
+            onClick={() => handleTableRowClick(row)}
           >
             Update
           </Menu.Item >
@@ -222,7 +249,7 @@ export default function TableScrollArea() {
             alignItems: 'center',}
     } miw={200} h={350} onScrollPositionChange={({ y }) => setScrolled(y !== 0)}>
             <form  onSubmit={form.onSubmit(console.log)}>
-        <TextInput ml="sm" mt="lg" label="Id" placeholder="Id" readOnly />
+        <TextInput ml="sm" mt="lg" label="Id" placeholder="Id" readOnly {...form.getInputProps('showTimeId')} />
         <DateTimePicker withSeconds ml="sm" mt="sm" mr ="lg" label="TimeStart" placeholder="Pick date and time" {...form.getInputProps('timeStart')} />
         <DateTimePicker withSeconds ml="sm" mt="sm" mr ="lg" label="TimeEnd" placeholder="Pick date and time" {...form.getInputProps('timeEnd')}/>
         <NumberInput
@@ -253,8 +280,8 @@ export default function TableScrollArea() {
           min={1}
           {...form.getInputProps('roomId')}
         />
-        <Button color='cyan' ml="sm" mt="lg" mb="lg" type="submit">
-          Submit
+        <Button color={isUpdate ? 'yellow' : 'cyan'} ml="sm" mt="lg" mb="lg" type="submit">
+        {isUpdate ? 'Update' : 'Create'}
         </Button>
         <Button color='blue' ml="sm" mt="lg" mb="lg" type="reset" onClick={handleReset}>
           Reset

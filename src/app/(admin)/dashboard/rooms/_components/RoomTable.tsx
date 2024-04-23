@@ -25,14 +25,22 @@ const data =  [
         roomType: "VIP"
     }
 ];
+interface Row {
+  roomId: number;
+  status: number;
+  seatQuantity: number;
+  roomType: string;
+}
 
 export default function TableScrollArea() {
     const [scrolled, setScrolled] = useState(false);
     const theme = useMantineTheme();
 
+
+    const [isUpdate, setUpdate] = useState(false);
     const form = useForm({
       mode: 'uncontrolled',
-      initialValues: {status: 0, roomType: ''},
+      initialValues: {roomId: 0,status: 0, roomType: '',seatQuantity: 0},
       
       validate: {
         roomType: (value) => (value.length < 2 ? 'roomType must have at least 2 letters' : null),
@@ -45,8 +53,20 @@ export default function TableScrollArea() {
       },
     });
     const handleReset = () => {
+      setUpdate(false);
         // Gọi phương thức reset của đối tượng form
         form.reset();
+      };
+
+      const handleTableRowClick = (row: Row) => {
+        setUpdate(true);
+        form.setValues({
+          roomId: row.roomId,
+          status: row.status,
+          roomType: row.roomType,
+          seatQuantity: row.seatQuantity
+        })
+
       };
 
     const rows = data.map((row) => (
@@ -84,6 +104,7 @@ export default function TableScrollArea() {
               <Text size="xs" tt="uppercase" fw={700} c="dimmed">
               </Text>
             }
+            onClick={() => handleTableRowClick(row)}
           >
             Update
           </Menu.Item >
@@ -129,7 +150,7 @@ export default function TableScrollArea() {
             alignItems: 'center',}
     } miw={200} h={350} onScrollPositionChange={({ y }) => setScrolled(y !== 0)}>
             <form  onSubmit={form.onSubmit(console.log)}>
-        <TextInput ml="sm" mt="lg" label="Id" placeholder="Id" readOnly mr="lg" />
+        <TextInput ml="sm" mt="lg" label="Id" placeholder="Id" readOnly mr="lg" {...form.getInputProps('roomId')} />
         <NumberInput
           mt="sm"
           ml="sm"
@@ -137,7 +158,7 @@ export default function TableScrollArea() {
           label="Status"
           placeholder="Status"
           min={0}
-          max={1}
+          max={2}
           {...form.getInputProps('status')}
         />
         <NumberInput
@@ -147,12 +168,12 @@ export default function TableScrollArea() {
           label="SeatQuantity"
           placeholder="SeatQuantity"
           min={0}
-          max={1}
           readOnly
+          {...form.getInputProps('seatQuantity')}
         />
-        <TextInput ml="sm" mt="lg" mr="lg" label="roomType" placeholder="roomType" readOnly {...form.getInputProps('roomType')}/>
-        <Button color='cyan' ml="sm" mt="lg" mb="lg" type="submit">
-          Submit
+        <TextInput ml="sm" mt="lg" mr="lg" label="roomType" placeholder="roomType" {...form.getInputProps('roomType')}/>
+        <Button color={isUpdate ? 'yellow' : 'cyan'} ml="sm" mt="lg" mb="lg" type="submit">
+        {isUpdate ? 'Update' : 'Create'}
         </Button>
         <Button color='blue' ml="sm" mt="lg" mb="lg" type="reset" onClick={handleReset}>
           Reset
