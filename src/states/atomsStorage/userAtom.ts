@@ -4,7 +4,7 @@ import { atomWithStorage } from 'jotai/utils';
 
 export const userInitState: IUser = {
   userId: 0,
-  username: '',
+  userName: '',
   fullname: '',
   email: '',
   phone: '',
