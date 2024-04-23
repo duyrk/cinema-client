@@ -51,7 +51,7 @@ const AxiosInstance = ({ contentType = 'application/json', headers }: AxiosInsta
     async (error) => {
       const originalConfig = error.config;
 
-      if (error?.response?.status === 401 && !originalConfig._retry && !isRefreshToken) {
+      if (error?.response?.status === 403 && !originalConfig._retry && !isRefreshToken) {
         originalConfig._retry = true;
         isRefreshToken = true;
 
@@ -60,9 +60,9 @@ const AxiosInstance = ({ contentType = 'application/json', headers }: AxiosInsta
         const res = await fetch(`${getBaseUrlApi()}/auth/refresh`, {
           method: 'POST',
           headers: {
-            'Content-Type': 'text/plain',
+            'Content-Type': 'application/json',
           },
-          body: currentRefreshToken,
+          body: JSON.stringify({ refreshToken: currentRefreshToken }),
         });
 
         try {

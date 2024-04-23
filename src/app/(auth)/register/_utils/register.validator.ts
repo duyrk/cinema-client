@@ -18,8 +18,13 @@ const pattern = {
   },
 };
 
-export const LoginSchema = JoiInstance.object({
-  username: JoiInstance.string().min(1).required(),
+export const RegisterSchema = JoiInstance.object({
+  userName: JoiInstance.string().min(4).required(),
   // .messages({ 'string.min': 'Username must have at least one character', 'string.requi' }),
-  password: JoiInstance.string().min(8).custom(pattern.password).required(),
+  passWord: JoiInstance.string().min(6).required(),
+  fullName: JoiInstance.string().min(5).required(),
+  email: JoiInstance.string().min(1).required(),
+  phone: JoiInstance.string().min(10).required(),
+  address: JoiInstance.string().min(1).required()
+
 });

@@ -7,6 +7,8 @@ import { MantineProvider } from '@mantine/core';
 import { Provider as JotaiProvider } from 'jotai';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import userAtom from '@states/atoms/userAtom';
+
 type Props = {
   children: React.ReactNode;
 };

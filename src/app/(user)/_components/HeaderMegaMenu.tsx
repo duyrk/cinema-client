@@ -19,6 +19,8 @@ import {
   useMantineTheme,
   ActionIcon,
   useMantineColorScheme,
+  Popover,
+  Notification,
 } from '@mantine/core';
 import {} from '@mantine/core';
 import { SunIcon, MoonIcon } from '@modulz/radix-icons';
@@ -39,6 +41,11 @@ import Link from 'next/link';
 import AppLogo from './AppLogo';
 import { FooterLinks } from './FooterLinks';
 import ROUTE from '@constants/routes';
+import { useAtom } from 'jotai';
+import userAtom, { userInitState } from '@states/atomsStorage/userAtom';
+import authAtom, { authInitState } from '@states/atomsStorage/authAtom';
+import { AuthService, StorageService, TokenService } from '@services';
+import { useRouter } from '@libs/patch-router';
 
 const mockdata = [
   {
@@ -74,7 +81,12 @@ const mockdata = [
 ];
 
 export function HeaderMegaMenu({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
   const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] = useDisclosure(false);
+  const [user, setUser] = useAtom(userAtom);
+  const [auth, setAuth] = useAtom(authAtom);
+  console.log('user', user);
+  console.log('login', auth.isLogin);
   const [linksOpened, { toggle: toggleLinks }] = useDisclosure(false);
   const theme = useMantineTheme();
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
@@ -96,7 +108,17 @@ export function HeaderMegaMenu({ children }: { children: React.ReactNode }) {
       </Group>
     </UnstyledButton>
   ));
-
+  const logoutAPI = async () => {
+    try {
+      const res = await AuthService.logout({ refreshToken: TokenService.getRefreshToken() ?? '' });
+      TokenService.clearTokens();
+      setAuth(authInitState);
+      setUser(userInitState);
+      console.log('Log out successfully!');
+    } catch (error) {
+      console.log('error' + error);
+    }
+  };
   return (
     <Box>
       <header className={`${classes.header} ${classes.sticky}`}>
@@ -184,10 +206,26 @@ export function HeaderMegaMenu({ children }: { children: React.ReactNode }) {
                 <MoonIcon style={{ width: 18, height: 18 }} />
               )}
             </ActionIcon>
-            <Button variant="default">Đăng ký</Button>
-            <Button variant="gradient" gradient={{ from: 'pink', to: 'red', deg: 90 }}>
-             <Link href={ROUTE.AUTH.LOGIN}>Đăng nhập</Link>
-            </Button>
+            {auth.isLogin ? (
+              <Popover width={200} position="bottom" withArrow shadow="md">
+                <Popover.Target>
+                  <Text className="cursor-pointer">Hello, {user.email}</Text>
+                </Popover.Target>
+                <Popover.Dropdown>
+                  <Button fullWidth variant="filled" color="red" onClick={logoutAPI}>
+                    Đăng xuất
+                  </Button>
+                </Popover.Dropdown>
+              </Popover>
+            ) : (
+              <Group>
+                {' '}
+                <Button variant="default">  <Link href={ROUTE.AUTH.REGISTER}>Đăng ký</Link></Button>
+                <Button variant="gradient" gradient={{ from: 'pink', to: 'red', deg: 90 }}>
+                  <Link href={ROUTE.AUTH.LOGIN}>Đăng nhập</Link>
+                </Button>{' '}
+              </Group>
+            )}
           </Group>
 
           <Burger opened={drawerOpened} onClick={toggleDrawer} hiddenFrom="sm" />
@@ -235,15 +273,27 @@ export function HeaderMegaMenu({ children }: { children: React.ReactNode }) {
                 <MoonIcon style={{ width: 18, height: 18 }} />
               )}
             </ActionIcon>
-            <Button variant="default">Đăng ký</Button>
-            <Button variant="gradient" gradient={{ from: 'pink', to: 'red', deg: 90 }}>
-              Đăng nhập
-            </Button>
+            {auth.isLogin ? (
+              <Group>
+                <Text className="cursor-pointer">Hello, {user.email}</Text>
+                <Button fullWidth variant="filled" color="red" onClick={logoutAPI}>
+                  Đăng xuất
+                </Button>
+              </Group>
+            ) : (
+              <Group>
+                {' '}
+                <Button variant="default">Đăng ký</Button>
+                <Button variant="gradient" gradient={{ from: 'pink', to: 'red', deg: 90 }}>
+                  <Link href={ROUTE.AUTH.LOGIN}>Đăng nhập</Link>
+                </Button>{' '}
+              </Group>
+            )}
           </Group>
         </ScrollArea>
       </Drawer>
       <section className={classes.sectionContainer}>{children}</section>
-     <FooterLinks/>
+      <FooterLinks />
     </Box>
   );
 }

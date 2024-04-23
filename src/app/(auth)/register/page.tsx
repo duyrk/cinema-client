@@ -1,7 +1,7 @@
 'use client';
 
 import {
-    Box,
+  Box,
   Button,
   Center,
   Container,
@@ -15,15 +15,13 @@ import {
   TextInput,
   Title,
 } from '@mantine/core';
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { useForm } from '@mantine/form';
 import { useMutation } from '@tanstack/react-query';
 import { joiResolver } from 'mantine-form-joi-resolver';
-import { IconLock, IconUserShield } from '@tabler/icons-react';
+import { IconHome, IconLock, IconMail, IconPhone, IconUserShield } from '@tabler/icons-react';
 
-import { LoginSchema } from './_utils/register.validator';
-import { ILoginRequest } from '@services/service';
-import { AuthService, DefaultResponse } from '@services';
+import { RegisterSchema } from './_utils/register.validator';
 
 import { AuthUtils } from '@utils';
 import { ERole } from '@constants/enums';
@@ -34,91 +32,103 @@ import { useRouter } from '@libs/patch-router';
 import AppLogo from '@app/(user)/_components/AppLogo';
 import Link from 'next/link';
 import ROUTE from '@constants/routes';
+import { AuthService } from '@services';
+
 
 // import { EStorageKey } from '@services/StorageService';
 
 export default function RegisterPage() {
-  const routes = useRouter();
-  const [, setUserData] = useLocalStorage<IUser>({
-    key: 'userData',
-  });
+  const router = useRouter();
+  const [isPending, setIsPending] = React.useState(false);
 
-  const { mutate, isPending, error, isError, data } = useMutation({
-    // mutationFn: AuthService.login,
-    mutationKey: ['login'],
-    onSuccess(data) {
-      //   if (data.data.user.role === ERole.ADMIN) {
-      //     routes.replace('/dashboard');
-      //     // storage user data
-      //     AuthUtils.setTokenData(data.data.token);
-      //     setUserData(data.data.user);
-      //   }
-    },
-  });
-
-  const commonError = useMemo(() => {
-    if (isError) {
-      return (JSON.parse(error.message) as DefaultResponse).message;
-    }
-
-    const userRole = data?.data.user.role;
-    if (userRole) {
-      return userRole === ERole.USER ? 'Account has invalid role' : undefined;
-    }
-  }, [data, isError]);
-
-  const loginForm = useForm({
-    name: 'loginForm',
+  const registerForm = useForm({
+    name: 'registerForm',
     initialValues: {
-      username: '',
-      password: '',
+      userName: '',
+      passWord: '',
+      fullName: '',
+      email: '',
+      phone: '',
+      address: '',
     },
-    validate: joiResolver(LoginSchema),
+    validate: joiResolver(RegisterSchema),
   });
-
-  const handleSubmit = (body: ILoginRequest) => {
-    mutate(body);
+  const registerAPI = async(body: IRegisterRequest)=>{
+    try { 
+      const res = await AuthService.register(body)
+      alert(res.data.message)
+      router.push('/login')
+    } catch (error) {
+      console.log('Register error'+error)
+    }
+  }
+  const handleSubmit = (body: IRegisterRequest) => {
+    console.log(body)
+    registerAPI(body)
   };
 
   return (
-    <Container size={420} pt={30}>
+    <Container size={420} pt={10}>
       <Center mb={20}>
         <Image src={'./web-icon.png'} w={120} className={styles.app_logo} />
       </Center>
-      <Stack justify='center' align='center'>
+      <Stack justify="center" align="center">
         <AppLogo width="60px" height="60px" />
         <Title ta="center" fw={'bolder'} c={'white'}>
-          Cinemax
+         Welcome to Cinemax!
         </Title>
       </Stack>
 
       <Paper withBorder shadow="md" p={30} mt={30} radius="md">
-        <form onSubmit={loginForm.onSubmit(handleSubmit)}>
+        <form onSubmit={registerForm.onSubmit(handleSubmit)}>
           <TextInput
             label="Username"
             placeholder="Your username"
             leftSection={<IconUserShield strokeWidth={2} />}
-            {...loginForm.getInputProps('username')}
+            {...registerForm.getInputProps('userName')}
           />
           <PasswordInput
             label="Password"
             placeholder="Your password"
             leftSection={<IconLock strokeWidth={2} />}
             mt="md"
-            {...loginForm.getInputProps('password')}
+            {...registerForm.getInputProps('passWord')}
           />
-          {commonError ? (
-            <Text mt="md" className={styles.textError}>
-              {commonError}
-            </Text>
-          ) : (
-            <></>
-          )}
-          <Box mt={"sm"} className={styles.signUpSection}>
-            <Text>Chưa có tài khoản?</Text>
-            <Link href={ROUTE.AUTH.REGISTER}>
-            <Text c={'yellow.6'} ml={5}>Đăng ký</Text>
-                </Link>
+          <TextInput
+            label="Full name"
+            placeholder="Your full name"
+            mt="md"
+            leftSection={<IconUserShield strokeWidth={2} />}
+            {...registerForm.getInputProps('fullName')}
+          />
+          <TextInput
+            mt="md"
+            label="Email"
+            placeholder="Your email"
+            leftSection={<IconMail strokeWidth={2} />}
+            {...registerForm.getInputProps('email')}
+          />
+          <TextInput
+            mt="md"
+            label="Phone"
+            placeholder="Your phone number"
+            leftSection={<IconPhone strokeWidth={2} />}
+            {...registerForm.getInputProps('phone')}
+          />
+          <TextInput
+            mt="md"
+            label="Address"
+            placeholder="Your address"
+            leftSection={<IconHome strokeWidth={2} />}
+            {...registerForm.getInputProps('address')}
+          />
+          <Box mt={'sm'} className={styles.signUpSection}>
+            <Text>Đã có tài khoản?</Text>
+            <Link href={ROUTE.AUTH.LOGIN}>
+              <Text c={'yellow.6'} ml={5}>
+                Đăng nhập
+              </Text>
+            </Link>
           </Box>
           <Button
             mt="md"
@@ -128,7 +138,7 @@ export default function RegisterPage() {
             loading={isPending}
             className={'hover:bg-gray-200'}
           >
-            <Text c={'black'}>Đăng nhập</Text>
+            <Text c={'black'}>Đăng ký</Text>
           </Button>
         </form>
       </Paper>

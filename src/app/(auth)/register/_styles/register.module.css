@@ -1,0 +1,14 @@
+.app_logo {
+    border-radius: 5px;
+}
+
+.textError {
+    color: var(--mantine-color-error);
+    font-size: calc(var(--mantine-font-size-sm) - .125rem * var(--mantine-scale))
+}
+.signUpSection{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}

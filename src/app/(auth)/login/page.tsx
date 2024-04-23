@@ -5,9 +5,7 @@ import {
   Button,
   Center,
   Container,
-  Group,
   Image,
-  Loader,
   Paper,
   PasswordInput,
   Stack,
@@ -17,33 +15,33 @@ import {
 } from '@mantine/core';
 import React, { useMemo, useState } from 'react';
 import { useForm } from '@mantine/form';
-import { useMutation } from '@tanstack/react-query';
 import { joiResolver } from 'mantine-form-joi-resolver';
 import { IconLock, IconUserShield } from '@tabler/icons-react';
-
 import { LoginSchema } from './_utils/login.validator';
 import { AuthService, DefaultResponse, StorageService, TokenService } from '@services';
-
-import { AuthUtils } from '@utils';
-import { ERole } from '@constants/enums';
 import styles from './_styles/login.module.css';
-
-import { useLocalStorage } from '@mantine/hooks';
 import { useRouter } from '@libs/patch-router';
 import AppLogo from '@app/(user)/_components/AppLogo';
 import Link from 'next/link';
 import ROUTE from '@constants/routes';
-
+import userAtom from '@states/atomsStorage/userAtom';
+import { useAtom } from 'jotai';
+import authAtom from '@states/atomsStorage/authAtom';
 export default function LoginPage() {
   const routes = useRouter();
   const [isPending, setIsPending] = React.useState(false);
-
+  const [, setUSer] = useAtom(userAtom)
+  const [, setIsLogin]= useAtom(authAtom)
   const loginApi = async (body: ILoginRequest) =>{
     try {
       const res = await AuthService.login(body)
+      setIsPending(false)
+      console.log('success')
       TokenService.setAccessToken(res.data.accessToken)
       TokenService.setRefreshToken(res.data.refreshToken)
-      console.log('success')
+      setUSer(res.data.data)
+      setIsLogin({isLogin: true})
+      routes.push('/home')
     } catch (error) {
       console.log('error' + error)
     }
@@ -57,7 +55,7 @@ export default function LoginPage() {
     validate: joiResolver(LoginSchema),
   });
   const handleSubmit = (body: ILoginRequest) => {
-    console.log(body)
+    setIsPending(true)
     loginApi(body)
   };
 
