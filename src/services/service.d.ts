@@ -99,7 +99,22 @@ interface IMovieRequest {
   status: number;
   urlThumbnail: string;
 }
-interface ShowTimes {
+
+
+//Showtime DTO
+interface IShowtimeRequest{
+  timeStart: string;
+  timeEnd: string;
+  status: number;
+  movieId: number;
+  roomId: number;
+}
+
+interface IShowtimeResponse{
+  data: IShowtime[]
+}
+
+interface IShowtime{
   showTimeId: number;
   timeStart: string;
   timeEnd: string;
@@ -109,8 +124,44 @@ interface ShowTimes {
 }
 interface IGetMovieByIdResponse {
   data: {
-    showTimes: ShowTimes[];
+    showTimes: IShowtime[];
   } & IMovie;
 
   message: string;
+}
+
+//Room DTO
+interface IRoomRequest{
+  status: number;
+  roomType: string;
+}
+
+interface IRoomResponse{
+  data: IRoom[]
+}
+
+interface IRoom{
+  roomId: number;
+  status: number;
+  seatQuantity: number;
+  roomType: string;
+}
+
+//Seat DTO
+interface ISeat{
+  seatId: number;
+  seatNumber: string;
+  seatStatus: number;
+  seatType: string;
+  roomId: number;
+}
+
+interface ISeatResponse{
+  data: ISeat[]
+}
+interface ISeatRequest{
+  seatNumber: string;
+  seatStatus: number;
+  seatType: string;
+  roomId: number;
 }

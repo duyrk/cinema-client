@@ -1,86 +1,18 @@
 import cx from 'clsx';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Table, ScrollArea, Box } from '@mantine/core';
 import classes from '../_styles/TableScrollArea.module.css';
 import { Button, Menu, Text, rem, useMantineTheme } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { NumberInput, TextInput} from '@mantine/core';
 import { DateTimePicker } from '@mantine/dates';
-
-
+import { format } from 'date-fns';
+import { ShowtimeService } from '@services/ShowtimeService';
 import {
   IconChevronDown,
   IconHttpDelete,
   IconHttpPut,
 } from '@tabler/icons-react';
-
-const data = [
-    {
-        showTimeId: 1,
-        timeStart: "2024-04-20T09:00:00.000+00:00",
-        timeEnd: "2024-04-20T12:00:00.000+00:00",
-        status: 1,
-        movieId: 1,
-        roomId: 1
-    },
-    {
-        showTimeId: 2,
-        timeStart: "2024-04-20T09:00:00.000+00:00",
-        timeEnd: "2024-04-20T12:00:00.000+00:00",
-        status: 1,
-        movieId: 2,
-        roomId: 2
-    },
-    {
-        showTimeId: 3,
-        timeStart: "2024-04-20T12:00:00.000+00:00",
-        timeEnd: "2024-04-20T15:00:00.000+00:00",
-        status: 1,
-        movieId: 3,
-        roomId: 1
-    },
-    {
-        showTimeId: 4,
-        timeStart: "2024-04-20T12:00:00.000+00:00",
-        timeEnd: "2024-04-20T15:00:00.000+00:00",
-        status: 1,
-        movieId: 4,
-        roomId: 2
-    },
-    {
-        showTimeId: 5,
-        timeStart: "2024-04-20T12:00:00.000+00:00",
-        timeEnd: "2024-04-20T15:00:00.000+00:00",
-        status: 1,
-        movieId: 3,
-        roomId: 1
-    },
-    {
-        showTimeId: 6,
-        timeStart: "2024-04-20T12:00:00.000+00:00",
-        timeEnd: "2024-04-20T15:00:00.000+00:00",
-        status: 1,
-        movieId: 4,
-        roomId: 2
-    },
-    {
-        showTimeId: 7,
-        timeStart: "2024-04-20T12:00:00.000+00:00",
-        timeEnd: "2024-04-20T15:00:00.000+00:00",
-        status: 1,
-        movieId: 3,
-        roomId: 1
-    },
-    {
-        showTimeId: 8,
-        timeStart: "2024-04-20T12:00:00.000+00:00",
-        timeEnd: "2024-04-20T15:00:00.000+00:00",
-        status: 1,
-        movieId: 4,
-        roomId: 2
-    },
-    
-]
 
 interface Row {
   showTimeId: number;
@@ -94,8 +26,85 @@ interface Row {
 export default function TableScrollArea() {
     const [scrolled, setScrolled] = useState(false);
     const theme = useMantineTheme();
-
     const [isUpdate, setUpdate] = useState(false);
+    const [showtimes, setShowtimes] = useState<IShowtimeResponse>();
+    useEffect(() => {
+      fetchShowtime();
+  }, []);
+  const fetchShowtime = async () => {
+    try {
+        const showtimeResponse = await ShowtimeService.getAllShowtime();
+        setShowtimes(showtimeResponse.data);
+    } catch (error) {
+        console.error("There is error when fetching data:", error);
+    }
+};
+const updateShowtime = async (showTimeId: string, body: IShowtimeRequest) => {
+  try {
+    const response =await ShowtimeService.updateShowtime(showTimeId, body);
+    console.log('Showtime updated successfully:', response);
+    fetchShowtime();
+  } catch (error) {
+    console.error('Failed to update showtime:', error);
+  }
+}
+const deleteShowtime = async (showTimeId: string) => {
+  try {
+    const response = await ShowtimeService.deleteShowtime(showTimeId);
+    console.log('Showtime deleted successfully:', response);
+    fetchShowtime();
+  } catch (error) {
+    console.error('Failed to delete showtime:', error);
+  }
+}
+const handleSubmitChange = async () => {
+  // event.preventDefault(); // Ngăn chặn việc gửi form một cách mặc định
+    const timestart = form.values.timeStart;
+    const formattedtimestart = format(timestart, 'yyyy-MM-dd HH:mm:ss');
+    const timeendStr = form.values.timeEnd; 
+    const formattedtimeend = format(timeendStr, 'yyyy-MM-dd HH:mm:ss');
+    const formData = {
+      timeStart: formattedtimestart,
+      timeEnd: formattedtimeend,
+      status: form.values.status,
+      movieId: form.values.movieId,
+      roomId: form.values.roomId
+    };
+    form.reset();
+    updateShowtime(form.values.showTimeId.toString(), formData);
+};
+const handleSubmit = async () => {
+  // event.preventDefault(); // Ngăn chặn việc gửi form một cách mặc định
+
+  try {
+    const timestart = form.values.timeStart;
+    const formattedtimestart = format(timestart, 'yyyy-MM-dd HH:mm:ss');
+    const timeendStr = form.values.timeEnd; 
+    const formattedtimeend = format(timeendStr, 'yyyy-MM-dd HH:mm:ss');
+    const formData = {
+      timeStart: formattedtimestart,
+      timeEnd: formattedtimeend,
+      status: form.values.status,
+      movieId: form.values.movieId,
+      roomId: form.values.roomId
+    };
+
+    // Gọi API POST để tạo mới dữ liệu
+    const response = await ShowtimeService.addShowtime(formData);
+
+    // Xử lý kết quả trả về từ API, ví dụ hiển thị thông báo thành công
+    console.log('Showtime created successfully:', response);
+    // Thực hiện các hành động tiếp theo sau khi tạo thành công (nếu cần)
+
+    // Đặt lại form sau khi gửi thành công (nếu cần)
+    form.reset();
+    fetchShowtime();
+  } catch (error) {
+    // Xử lý lỗi khi gọi API, ví dụ hiển thị thông báo lỗi
+    console.error('Error creating showtime:', error);
+    // Thực hiện các hành động xử lý lỗi (nếu cần)
+  }
+};
     const form = useForm({
       mode: 'uncontrolled',
       initialValues: {showTimeId: 0,timeStart: '', timeEnd: '', status: 0, movieId: 1, roomId: 1},
@@ -148,6 +157,9 @@ export default function TableScrollArea() {
         // Gọi phương thức reset của đối tượng form
         form.reset();
       };
+      const handleDeletShowtimeClick = (showTimeId: number) => {
+        deleteShowtime(showTimeId.toString());
+      };
 
       const handleTableRowClick = (row: Row) => {
         setUpdate(true);
@@ -164,7 +176,7 @@ export default function TableScrollArea() {
       };
 
 
-    const rows = data.map((row) => (
+    const rows = showtimes?.data.map((row) => (
       <Table.Tr key={row.showTimeId}>
       <Table.Td>{row.showTimeId}</Table.Td>
         <Table.Td>{row.timeStart}</Table.Td>
@@ -217,6 +229,7 @@ export default function TableScrollArea() {
               <Text size="xs" tt="uppercase" fw={700} c="dimmed">
               </Text>
             }
+            onClick={() => handleDeletShowtimeClick(row.showTimeId)}
           >
             Delete
           </Menu.Item>
@@ -248,7 +261,7 @@ export default function TableScrollArea() {
             justifyContent: 'center',
             alignItems: 'center',}
     } miw={200} h={350} onScrollPositionChange={({ y }) => setScrolled(y !== 0)}>
-            <form  onSubmit={form.onSubmit(console.log)}>
+            <form  onSubmit={form.onSubmit(isUpdate ? handleSubmitChange : handleSubmit)}>
         <TextInput ml="sm" mt="lg" label="Id" placeholder="Id" readOnly {...form.getInputProps('showTimeId')} />
         <DateTimePicker withSeconds ml="sm" mt="sm" mr ="lg" label="TimeStart" placeholder="Pick date and time" {...form.getInputProps('timeStart')} />
         <DateTimePicker withSeconds ml="sm" mt="sm" mr ="lg" label="TimeEnd" placeholder="Pick date and time" {...form.getInputProps('timeEnd')}/>
