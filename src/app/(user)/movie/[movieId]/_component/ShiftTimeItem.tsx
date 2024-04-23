@@ -6,7 +6,7 @@ export interface IShiftTimeItemData {
   showTimeId: number;
 }
 export interface ShiftTimeItem {
-  onClick?: () => void;
+  onClick?: (timeStartText: string) => void;
   data: IShiftTimeItemData;
 }
 const ShiftTimeItem: React.FC<ShiftTimeItem> = (props) => {
@@ -19,7 +19,9 @@ const ShiftTimeItem: React.FC<ShiftTimeItem> = (props) => {
     return { hour, minute };
   };
   return (
-    <Button variant="outline" onClick={onClick}>{`${convertDateTime(data.dateTime).hour}:${
+    <Button variant="outline" onClick={()=>{onClick?.(`${convertDateTime(data.dateTime).hour}:${
+      convertDateTime(data.dateTime).minute
+    }`)}}>{`${convertDateTime(data.dateTime).hour}:${
       convertDateTime(data.dateTime).minute
     }`}</Button>
   );

@@ -1,20 +1,12 @@
 // Auth DTO
 interface IUser {
-  username: string;
+  userId: number;
+  userName: string;
   fullname: string;
   email: string;
   phone: string;
   address: string;
   role: import('../constants/enums').ERole;
-}
-interface ILoginRequest {
-  username: string;
-  password: string;
-}
-interface ILoginResponse {
-  accessToken: string;
-  refreshToken: string;
-  data: IUser;
 }
 
 interface IRegisterRequest {
@@ -42,17 +34,6 @@ interface ILogoutResponse {
 // import { IToken, IUser } from '@global/global';
 
 // Auth DTO
-
-interface IUser {
-  refreshToken: string;
-  username: string;
-  message: string;
-  fullname: string;
-  email: string;
-  phone: string;
-  address: string;
-  role: import('../constants/enums').ERole;
-}
 
 interface ILoginRequest {
   username: string;
@@ -100,9 +81,8 @@ interface IMovieRequest {
   urlThumbnail: string;
 }
 
-
 //Showtime DTO
-interface IShowtimeRequest{
+interface IShowtimeRequest {
   timeStart: string;
   timeEnd: string;
   status: number;
@@ -110,11 +90,11 @@ interface IShowtimeRequest{
   roomId: number;
 }
 
-interface IShowtimeResponse{
-  data: IShowtime[]
+interface IShowtimeResponse {
+  data: IShowtime[];
 }
 
-interface IShowtime{
+interface IShowtime {
   showTimeId: number;
   timeStart: string;
   timeEnd: string;
@@ -131,16 +111,16 @@ interface IGetMovieByIdResponse {
 }
 
 //Room DTO
-interface IRoomRequest{
+interface IRoomRequest {
   status: number;
   roomType: string;
 }
 
-interface IRoomResponse{
-  data: IRoom[]
+interface IRoomResponse {
+  data: IRoom[];
 }
 
-interface IRoom{
+interface IRoom {
   roomId: number;
   status: number;
   seatQuantity: number;
@@ -148,7 +128,7 @@ interface IRoom{
 }
 
 //Seat DTO
-interface ISeat{
+interface ISeat {
   seatId: number;
   seatNumber: string;
   seatStatus: number;
@@ -156,12 +136,31 @@ interface ISeat{
   roomId: number;
 }
 
-interface ISeatResponse{
-  data: ISeat[]
+interface ISeatResponse {
+  data: ISeat[];
 }
-interface ISeatRequest{
+interface ISeatRequest {
   seatNumber: string;
   seatStatus: number;
   seatType: string;
   roomId: number;
+}
+interface ISeatByShowTimeIdRequest {
+  showTimeId: string;
+}
+interface ISeatByShowTimeResponse {
+  data: ISeat[];
+  message: string;
+}
+
+interface IAddNewTicketRequest{
+  price: string;
+  seatLocation: Array<string>;
+  date: string;
+  showtimeId: number;
+  userId: number
+}
+interface IAddNewTicketResponse{
+  data: any;
+  message: string
 }

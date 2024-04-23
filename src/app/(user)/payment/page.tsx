@@ -1,11 +1,37 @@
 'use client';
 
+import { useRouter } from '@libs/patch-router';
 import { Box, Button, Container, Group, Paper, Stack, Table, Text } from '@mantine/core';
+import { PaymentService } from '@services/PaymentService';
 import { useSearchParams } from 'next/navigation';
 
 export default function PaymentPage() {
+  const router = useRouter()
   const params = useSearchParams();
-
+  const price = params.get('price');
+  const seatLocation: Array<string> = JSON.parse(params.get('seatLocation') ?? '');
+  const date = params.get('date');
+  const showTimeId = params.get('showTimeId');
+  const userId = params.get('userId');
+  const movieName = params.get('movieName');
+  const timeStart = params.get('timeStart');
+  const roomId = params.get('roomId');
+  const paymentApi = async () => {
+    try {
+      const res = await PaymentService.addNewTicket({
+        date: date!,
+        price: price!,
+        seatLocation: seatLocation,
+        showtimeId: Number(showTimeId),
+        userId: Number(userId),
+      });
+      console.log(res.data.message);
+      alert(res.data.message)
+      router.push('/home')
+    } catch (error) {
+      console.log('error' + error);
+    }
+  };
   return (
     <Container>
       <Group justify="center">
@@ -17,21 +43,21 @@ export default function PaymentPage() {
         <Text className="text-2xl">Thông tin phim</Text>
         <Group mt={20}>
           <Text className="text-xl">Phim:</Text>
-          <Text fw={700}>LẬT MẶT 7: MỘT ĐIỀU ƯỚC-K</Text>
+          <Text fw={700}>{movieName}</Text>
         </Group>
         <Group>
           <Group mt={20}>
             <Text className="text-xl">Giờ chiếu:</Text>
-            <Text fw={700}>{`${19}:${10}`}</Text>
+            <Text fw={700}>{timeStart}</Text>
           </Group>
           <Group mt={20}>
             <Text className="text-xl">Ghế:</Text>
-            <Text fw={700}>{`A1, A2`}</Text>
+            <Text fw={700}>{seatLocation.toString()}</Text>
           </Group>
         </Group>
         <Group mt={20}>
           <Text className="text-xl">Phòng chiếu:</Text>
-          <Text fw={700}>{`1`}</Text>
+          <Text fw={700}>{roomId}</Text>
         </Group>
       </Paper>
       <Paper withBorder shadow="md" p={30} mt={30} radius="md">
@@ -52,19 +78,26 @@ export default function PaymentPage() {
           </Table.Thead>
           <Table.Tbody>
             <Table.Td>
-              <Text fw={700}>Ghế (A1, A2)</Text>
+              <Text fw={700}>{`Ghế (${seatLocation.toString()})`}</Text>
             </Table.Td>
             <Table.Td>
-              <Text fw={700}>2</Text>
+              <Text fw={700}>{seatLocation.length}</Text>
             </Table.Td>
             <Table.Td>
-              <Text fw={700}>80.000đ</Text>
+              <Text fw={700}>{price}đ</Text>
             </Table.Td>
           </Table.Tbody>
         </Table>
       </Paper>
-      <Button fullWidth variant="gradient" gradient={{ from: 'red', to: 'pink', deg: 90 }} mt={30} mb={30}>
-       Thanh toán
+      <Button
+        fullWidth
+        variant="gradient"
+        gradient={{ from: 'red', to: 'pink', deg: 90 }}
+        mt={30}
+        mb={30}
+        onClick={paymentApi}
+      >
+        Thanh toán
       </Button>
     </Container>
   );

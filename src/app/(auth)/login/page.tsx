@@ -43,7 +43,7 @@ export default function LoginPage() {
       setUSer(res.data.data)
       setIsLogin({isLogin: true})
       if(res.data.data.role === ERole.ADMIN){
-        routes.push('/dashboard/movies')
+        routes.push('/dashboard')
       }else{
         routes.push('/home')
       }

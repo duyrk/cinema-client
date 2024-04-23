@@ -9,9 +9,9 @@ import { TokenService } from '@services';
 import { getBaseUrlApi } from './getBaseUrl';
 
 export interface RefreshTokenRes {
-    refreshToken: string;
-    accessToken: string;
-    data: any
+  refreshToken: string;
+  accessToken: string;
+  data: any;
 }
 
 export type AxiosInstanceType = {
@@ -57,6 +57,7 @@ const AxiosInstance = ({ contentType = 'application/json', headers }: AxiosInsta
 
         //refresh token
         const currentRefreshToken = TokenService.getRefreshToken();
+        console.log(currentRefreshToken)
         const res = await fetch(`${getBaseUrlApi()}/auth/refresh`, {
           method: 'POST',
           headers: {
@@ -71,14 +72,15 @@ const AxiosInstance = ({ contentType = 'application/json', headers }: AxiosInsta
           if (parseRes?.refreshToken && parseRes?.accessToken) {
             console.log(res);
             const { accessToken, refreshToken } = parseRes;
+            TokenService.clearTokens();
             TokenService.setAccessToken(accessToken);
             TokenService.setRefreshToken(refreshToken);
-            originalConfig.headers['Authorization'] = `Bearer ${accessToken}` ;
+            originalConfig.headers['Authorization'] = `Bearer ${accessToken}`;
             return axiosInstance(originalConfig);
           }
         } catch (e) {
           console.log(e);
-          TokenService.clearTokens();
+
         } finally {
           isRefreshToken = false;
         }

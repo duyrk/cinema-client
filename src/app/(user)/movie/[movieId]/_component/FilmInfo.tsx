@@ -53,7 +53,7 @@ const FilmInfo: React.FC<FIlmInfoProps> = (props) => {
           width="853"
           height="480"
           src={data.embedTrailer}
-          title="7UPPERCUTS - DOPAMINE"
+          title="Trailer"
           frameborder="0"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
           referrerpolicy="strict-origin-when-cross-origin"
