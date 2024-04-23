@@ -20,6 +20,11 @@ import {
 import { MantineLogo } from '@mantinex/mantine-logo';
 import classes from '../_styles/NavbarSimple.module.css';
 import AppLogo from '@app/(user)/_components/AppLogo';
+import { AuthService, TokenService } from '@services';
+import { useAtom } from 'jotai';
+import userAtom, { userInitState } from '@states/atomsStorage/userAtom';
+import authAtom, { authInitState } from '@states/atomsStorage/authAtom';
+import { useRouter } from '@libs/patch-router';
 
 const data = [
   { link: '/dashboard/movies', label: 'Phim', icon: IconMovie },
@@ -27,12 +32,13 @@ const data = [
   { link: '/dashboard/rooms', label: 'Phòng', icon: IconDoorEnter },
   { link: '/dashboard/seats', label: 'Ghế', icon: IconArmchair2 },
   { link: '/home', label: 'User', icon: IconUsers },
-
 ];
 
 export function NavbarSimple({ children }: { children: React.ReactNode }) {
+  const router = useRouter()
   const [active, setActive] = useState('Billing');
-
+  const [user, setUser] = useAtom(userAtom);
+  const [auth, setAuth] = useAtom(authAtom);
   const links = data.map((item) => (
     <a
       className={classes.link}
@@ -48,19 +54,29 @@ export function NavbarSimple({ children }: { children: React.ReactNode }) {
       <span>{item.label}</span>
     </a>
   ));
-
+  const logoutAPI = async () => {
+    try {
+      const res = await AuthService.logout({ refreshToken: TokenService.getRefreshToken() ?? '' });
+      TokenService.clearTokens();
+      setAuth(authInitState);
+      setUser(userInitState);
+      console.log('Log out successfully!');
+      router.push('/home')
+    } catch (error) {
+      console.log('error' + error);
+    }
+  };
   return (
     <div className={classes.navbarContainer}>
       <nav className={classes.navbar}>
         <div className={classes.navbarMain}>
           <Group className={classes.header} justify="space-between">
-           
-          <Group>
-            <AppLogo width="30px" height="30px" />
-            <Text size="24px" fw={700}>
-              Cinemax
-            </Text>
-          </Group>
+            <Group>
+              <AppLogo width="30px" height="30px" />
+              <Text size="24px" fw={700}>
+                Cinemax
+              </Text>
+            </Group>
             <Code fw={700}>v0.0.1</Code>
           </Group>
           {links}
@@ -72,7 +88,14 @@ export function NavbarSimple({ children }: { children: React.ReactNode }) {
             <span>Change account</span>
           </a>
 
-          <a href="#" className={classes.link} onClick={(event) => event.preventDefault()}>
+          <a
+            href="#"
+            className={classes.link}
+            onClick={(event) => {
+              event.preventDefault();
+              logoutAPI();
+            }}
+          >
             <IconLogout className={classes.linkIcon} stroke={1.5} />
             <span>Logout</span>
           </a>
