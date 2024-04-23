@@ -1,5 +1,5 @@
 import cx from 'clsx';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Table, ScrollArea, Box } from '@mantine/core';
 import classes from '../_styles/TableScrollArea.module.css';
 import { Button, Menu, Text, rem, useMantineTheme } from '@mantine/core';
@@ -10,21 +10,7 @@ import {
   IconHttpDelete,
   IconHttpPut,
 } from '@tabler/icons-react';
-
-const data =  [
-    {
-        roomId: 2,
-        status: 2,
-        seatQuantity: 10,
-        roomType: "Cheap"
-    },
-    {
-        roomId: 1,
-        status: 2,
-        seatQuantity: 10,
-        roomType: "VIP"
-    }
-];
+import { RoomService } from '@services/RoomService';
 interface Row {
   roomId: number;
   status: number;
@@ -35,9 +21,73 @@ interface Row {
 export default function TableScrollArea() {
     const [scrolled, setScrolled] = useState(false);
     const theme = useMantineTheme();
-
-
     const [isUpdate, setUpdate] = useState(false);
+    const [rooms, setrooms] = useState<IRoomResponse>();
+    useEffect(() => {
+      fetchRoom();
+  }, []);
+
+  const fetchRoom = async () => {
+    try {
+        const roomResponse = await RoomService.getAllRoom();
+        setrooms(roomResponse.data);
+    } catch (error) {
+        console.error("There is error when fetching data:", error);
+    }
+};
+const updateRoom = async (roomId: string, body: IRoomRequest) => {
+  try {
+    const response =await RoomService.updateRoom(roomId, body);
+    console.log('Room updated successfully:', response);
+    fetchRoom();
+  } catch (error) {
+    console.error('Failed to update room:', error);
+  }
+}
+const deleteRoom = async (movieId: string) => {
+  try {
+    const response = await RoomService.deleteRoom(movieId);
+    console.log('Room deleted successfully:', response);
+    fetchRoom();
+  } catch (error) {
+    console.error('Failed to delete room:', error);
+  }
+}
+
+const handleSubmitChange = async () => {
+  // event.preventDefault(); // Ngăn chặn việc gửi form một cách mặc định
+    const formData = {
+      status: form.values.status,
+      roomType: form.values.roomType,
+    };
+    form.reset();
+    updateRoom(form.values.roomId.toString(), formData);
+};
+const handleSubmit = async () => {
+  // event.preventDefault(); // Ngăn chặn việc gửi form một cách mặc định
+
+  try {
+    const formData = {
+      status: form.values.status,
+      roomType: form.values.roomType,
+    };
+
+    // Gọi API POST để tạo mới dữ liệu
+    const response = await RoomService.addRoom(formData);
+
+    // Xử lý kết quả trả về từ API, ví dụ hiển thị thông báo thành công
+    console.log('Room created successfully:', response);
+    // Thực hiện các hành động tiếp theo sau khi tạo thành công (nếu cần)
+
+    // Đặt lại form sau khi gửi thành công (nếu cần)
+    form.reset();
+    fetchRoom();
+  } catch (error) {
+    // Xử lý lỗi khi gọi API, ví dụ hiển thị thông báo lỗi
+    console.error('Error creating room:', error);
+    // Thực hiện các hành động xử lý lỗi (nếu cần)
+  }
+};
     const form = useForm({
       mode: 'uncontrolled',
       initialValues: {roomId: 0,status: 0, roomType: '',seatQuantity: 0},
@@ -57,6 +107,9 @@ export default function TableScrollArea() {
         // Gọi phương thức reset của đối tượng form
         form.reset();
       };
+      const handleDeletRoomClick = (roomId: number) => {
+        deleteRoom(roomId.toString());
+      };
 
       const handleTableRowClick = (row: Row) => {
         setUpdate(true);
@@ -69,7 +122,7 @@ export default function TableScrollArea() {
 
       };
 
-    const rows = data.map((row) => (
+    const rows = rooms?.data.map((row) => (
       <Table.Tr key={row.roomId} >
         <Table.Td >{row.roomId}</Table.Td>
       <Table.Td  >{row.status}</Table.Td>
@@ -120,6 +173,7 @@ export default function TableScrollArea() {
               <Text size="xs" tt="uppercase" fw={700} c="dimmed">
               </Text>
             }
+            onClick={() => handleDeletRoomClick(row.roomId)}
           >
             Delete
           </Menu.Item>
@@ -149,7 +203,7 @@ export default function TableScrollArea() {
             justifyContent: 'center',
             alignItems: 'center',}
     } miw={200} h={350} onScrollPositionChange={({ y }) => setScrolled(y !== 0)}>
-            <form  onSubmit={form.onSubmit(console.log)}>
+            <form  onSubmit={form.onSubmit(isUpdate ? handleSubmitChange : handleSubmit)}>
         <TextInput ml="sm" mt="lg" label="Id" placeholder="Id" readOnly mr="lg" {...form.getInputProps('roomId')} />
         <NumberInput
           mt="sm"

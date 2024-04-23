@@ -6,14 +6,14 @@ import { Button, Menu, Text, rem, useMantineTheme } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { NumberInput, TextInput} from '@mantine/core';
 import { DateTimePicker } from '@mantine/dates';
-import { ChangeEvent } from 'react';
+import { format } from 'date-fns';
+
 import {
   IconChevronDown,
   IconHttpDelete,
   IconHttpPut,
 } from '@tabler/icons-react';
 import { MovieService } from '@services/MovieService';
-import formData from 'wretch/addons/formData';
   interface Row {
     movieId: number;
     movieName: string;
@@ -33,11 +33,9 @@ import formData from 'wretch/addons/formData';
 
 export default function TableScrollArea() {
     const [scrolled, setScrolled] = useState(false);
-    const [createFrom, setForm] = useState({});
     const theme = useMantineTheme();
     const [isUpdate, setUpdate] = useState(false);
     const [movies, setMovies] = useState<IMovieResponse>();
-    const [addMovie, setAddMovie] = useState<IMovieRequest>();
     useEffect(() => {
       fetchMovies();
   }, []);
@@ -47,10 +45,94 @@ export default function TableScrollArea() {
         const moviesResponse = await MovieService.getAllMovie();
         setMovies(moviesResponse.data);
     } catch (error) {
-        console.error("Đã xảy ra lỗi khi lấy dữ liệu phim:", error);
+        console.error("There is error when fetching data", error);
     }
 };
 
+const updateMovie = async (movieId: string, body: IMovieRequest) => {
+  try {
+    const response =await MovieService.updateMovie(movieId, body);
+    console.log('Movie updated successfully:', response);
+    fetchMovies();
+  } catch (error) {
+    console.error('Failed to update movie:', error);
+  }
+}
+const deleteMovie = async (movieId: string) => {
+  try {
+    const response = await MovieService.deleteMovie(movieId);
+    console.log('Movie deleted successfully:', response);
+    fetchMovies();
+  } catch (error) {
+    console.error('Failed to delete movie:', error);
+  }
+}
+
+const handleSubmitChange = async () => {
+  // event.preventDefault(); // Ngăn chặn việc gửi form một cách mặc định
+    const releaseDate = form.values.releaseDate;
+    const formattedReleaseDate = format(releaseDate, 'yyyy-MM-dd HH:mm:ss');
+    const endDateStr = form.values.endDate; 
+    const formattedEndDate = format(endDateStr, 'yyyy-MM-dd HH:mm:ss');
+    const formData = {
+      movieName: form.values.name,
+      movieGenre: form.values.genre,
+      description: form.values.description,
+      duration: form.values.duration,
+      director: form.values.director,
+      actor: form.values.actor,
+      releaseDate: formattedReleaseDate,
+      endDate: formattedEndDate,
+      ageRestriction: form.values.ageRestriction,
+      urlTrailer: form.values.trailer,
+      status: form.values.status,
+      urlThumbnail: form.values.thumbnail
+    };
+    form.reset();
+    updateMovie(form.values.id.toString(), formData);
+};
+
+const handleSubmit = async () => {
+  // event.preventDefault(); // Ngăn chặn việc gửi form một cách mặc định
+
+  try {
+    const releaseDate = form.values.releaseDate;
+    const formattedReleaseDate = format(releaseDate, 'yyyy-MM-dd HH:mm:ss');
+
+    const endDateStr = form.values.endDate;
+    const formattedEndDate = format(endDateStr, 'yyyy-MM-dd HH:mm:ss');
+    // Lấy giá trị từ các trường nhập liệu trong form
+    const formData = {
+      movieName: form.values.name,
+      movieGenre: form.values.genre,
+      description: form.values.description,
+      duration: form.values.duration,
+      director: form.values.director,
+      actor: form.values.actor,
+      releaseDate: formattedReleaseDate,
+      endDate: formattedEndDate,
+      ageRestriction: form.values.ageRestriction,
+      urlTrailer: form.values.trailer,
+      status: form.values.status,
+      urlThumbnail: form.values.thumbnail
+    };
+
+    // Gọi API POST để tạo mới dữ liệu
+    const response = await MovieService.addMovie(formData);
+
+    // Xử lý kết quả trả về từ API, ví dụ hiển thị thông báo thành công
+    console.log('Movie created successfully:', response);
+    // Thực hiện các hành động tiếp theo sau khi tạo thành công (nếu cần)
+
+    // Đặt lại form sau khi gửi thành công (nếu cần)
+    form.reset();
+    fetchMovies();
+  } catch (error) {
+    // Xử lý lỗi khi gọi API, ví dụ hiển thị thông báo lỗi
+    console.error('Error creating movie:', error);
+    // Thực hiện các hành động xử lý lỗi (nếu cần)
+  }
+};
 
     const form = useForm({
       mode: 'uncontrolled',
@@ -99,18 +181,8 @@ export default function TableScrollArea() {
 
         form.reset();
       };
-      const handleDateTimeChange = (name: string) => (date: Date | null) => {
-        setForm({
-          ...formData,
-          [name]: date ? date.toISOString() : '', // Convert date to ISO string format
-        });
-      };
-      const handleNumberChange = (event: ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = event.target;
-        setForm({
-          ...formData,
-          [name]: parseInt(value), // Convert value to integer
-        });
+      const handleDeleteMoveClick = (movieId: number) => {
+        deleteMovie(movieId.toString());
       };
       const handleTableRowClick = (row: Row) => {
         setUpdate(true);
@@ -194,6 +266,7 @@ export default function TableScrollArea() {
               <Text size="xs" tt="uppercase" fw={700} c="dimmed">
               </Text>
             }
+            onClick={() => handleDeleteMoveClick(row.movieId)}
           >
             Delete
           </Menu.Item>
@@ -233,7 +306,7 @@ export default function TableScrollArea() {
             justifyContent: 'center',
             alignItems: 'center',}
     } miw={200} h={350} onScrollPositionChange={({ y }) => setScrolled(y !== 0)}>
-            <form  onSubmit={form.onSubmit(console.log)}>
+            <form  onSubmit={form.onSubmit(isUpdate ? handleSubmitChange : handleSubmit)}>
             <TextInput ml="sm" mt="lg" label="Id" placeholder="Id" readOnly {...form.getInputProps('id')} />
         <TextInput ml="sm" mt="sm" label="Name" placeholder="Name" {...form.getInputProps('name')} />
         <TextInput ml="sm" mt="sm" mr ="lg" label="Description" placeholder="Description" {...form.getInputProps('description')} />

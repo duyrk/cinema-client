@@ -1,39 +1,16 @@
 import cx from 'clsx';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Table, ScrollArea, Box } from '@mantine/core';
 import classes from '../_styles/TableScrollArea.module.css';
 import { Button, Menu, Text, rem, useMantineTheme } from '@mantine/core';
 import { NumberInput, TextInput} from '@mantine/core';
 import { useForm } from '@mantine/form';
+import { SeatService } from '@services/SeatService';
 import {
   IconChevronDown,
   IconHttpDelete,
   IconHttpPut,
 } from '@tabler/icons-react';
-
-const data =  [
-    {
-        seatId: 1,
-        seatNumber: "A1",
-        seatStatus: 1,
-        seatType: "Ghe Don",
-        roomId: 1,
-    },
-    {
-        seatId: 2,
-        seatNumber: "A2",
-        seatStatus: 1,
-        seatType: "Ghe Don",
-        roomId: 1,
-    },
-    {
-        seatId: 3,
-        seatNumber: "A3",
-        seatStatus: 1,
-        seatType: "Ghe Don",
-        roomId: 1,
-    },
-];
 
 interface Row {
     seatId: number;
@@ -46,8 +23,75 @@ interface Row {
 export default function TableScrollArea() {
     const [scrolled, setScrolled] = useState(false);
     const theme = useMantineTheme();
-
     const [isUpdate, setUpdate] = useState(false);
+    const [seats, setSeat] = useState<ISeatResponse>();
+    useEffect(() => {
+      fetchSeat();
+  }, []);
+  const fetchSeat = async () => {
+    try {
+        const seatResponse = await SeatService.getAllSeat();
+        setSeat(seatResponse.data);
+    } catch (error) {
+        console.error("There is error when fetching data:", error);
+    }
+};
+const updateSeat = async (seatId: string, body: ISeatRequest) => {
+  try {
+    const response =await SeatService.updateSeat(seatId, body);
+    console.log('Seat updated successfully:', response);
+    fetchSeat();
+  } catch (error) {
+    console.error('Failed to update seat:', error);
+  }
+}
+const deleteSeat = async (seatId: string) => {
+  try {
+    const response = await SeatService.deleteSeat(seatId);
+    console.log('Seat deleted successfully:', response);
+    fetchSeat();
+  } catch (error) {
+    console.error('Failed to delete seat:', error);
+  }
+}
+const handleSubmitChange = async () => {
+  // event.preventDefault(); // Ngăn chặn việc gửi form một cách mặc định
+    const formData = {
+      seatStatus: form.values.seatStatus,
+      seatNumber: form.values.seatNumber,
+      roomId: form.values.roomId,
+      seatType: form.values.seatType,
+    };
+    form.reset();
+    updateSeat(form.values.seatId.toString(), formData);
+};
+const handleSubmit = async () => {
+  // event.preventDefault(); // Ngăn chặn việc gửi form một cách mặc định
+
+  try {
+    const formData = {
+      seatStatus: form.values.seatStatus,
+      seatNumber: form.values.seatNumber,
+      roomId: form.values.roomId,
+      seatType: form.values.seatType,
+    };
+
+    // Gọi API POST để tạo mới dữ liệu
+    const response = await SeatService.addSeat(formData);
+
+    // Xử lý kết quả trả về từ API, ví dụ hiển thị thông báo thành công
+    console.log('Seat created successfully:', response);
+    // Thực hiện các hành động tiếp theo sau khi tạo thành công (nếu cần)
+
+    // Đặt lại form sau khi gửi thành công (nếu cần)
+    form.reset();
+    fetchSeat();
+  } catch (error) {
+    // Xử lý lỗi khi gọi API, ví dụ hiển thị thông báo lỗi
+    console.error('Error creating seat:', error);
+    // Thực hiện các hành động xử lý lỗi (nếu cần)
+  }
+};
     const form = useForm({
       mode: 'uncontrolled',
       initialValues: {seatId: 0 ,seatStatus: 0, roomId: 0, seatNumber: '', seatType: ''},
@@ -74,6 +118,9 @@ export default function TableScrollArea() {
         // Gọi phương thức reset của đối tượng form
         form.reset();
       };
+      const handleDeletSeatClick = (seatId: number) => {
+        deleteSeat(seatId.toString());
+      };
     
       const handleTableRowClick = (row: Row) => {
         setUpdate(true);
@@ -88,7 +135,7 @@ export default function TableScrollArea() {
       };
 
 
-    const rows = data.map((row) => (
+    const rows = seats?.data.map((row) => (
       <Table.Tr key={row.seatId} >
         <Table.Td >{row.seatId}</Table.Td>
       <Table.Td  >{row.seatNumber}</Table.Td>
@@ -140,6 +187,7 @@ export default function TableScrollArea() {
               <Text size="xs" tt="uppercase" fw={700} c="dimmed">
               </Text>
             }
+            onClick={() => handleDeletSeatClick(row.seatId)}
           >
             Delete
           </Menu.Item>
@@ -170,7 +218,7 @@ export default function TableScrollArea() {
             justifyContent: 'center',
             alignItems: 'center',}
     } miw={200} h={350} onScrollPositionChange={({ y }) => setScrolled(y !== 0)}>
-            <form  onSubmit={form.onSubmit(console.log)}>
+            <form  onSubmit={form.onSubmit(isUpdate ? handleSubmitChange : handleSubmit)}>
         <TextInput ml="sm" mt="lg" label="Id" placeholder="Id" readOnly mr="lg"  {...form.getInputProps('seatId')}/>
         <TextInput ml="sm" mt="lg" label="SeatNumber" placeholder="SeatNumber" mr="lg"  {...form.getInputProps('seatNumber')}/>
         <NumberInput

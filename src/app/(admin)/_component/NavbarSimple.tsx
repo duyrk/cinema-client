@@ -23,10 +23,10 @@ import AppLogo from '@app/(user)/_components/AppLogo';
 
 const data = [
   { link: '/dashboard/movies', label: 'Phim', icon: IconMovie },
-  { link: '', label: 'Xuất chiếu', icon: IconClockPlay },
-  { link: '', label: 'Phòng', icon: IconDoorEnter },
-  { link: '', label: 'Ghế', icon: IconArmchair2 },
-  { link: '', label: 'User', icon: IconUsers },
+  { link: '/dashboard/showtimes', label: 'Xuất chiếu', icon: IconClockPlay },
+  { link: '/dashboard/rooms', label: 'Phòng', icon: IconDoorEnter },
+  { link: '/dashboard/seats', label: 'Ghế', icon: IconArmchair2 },
+  { link: '/home', label: 'User', icon: IconUsers },
 
 ];
 
