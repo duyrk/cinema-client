@@ -19,11 +19,14 @@ const ShiftTimeItem: React.FC<ShiftTimeItem> = (props) => {
     return { hour, minute };
   };
   return (
-    <Button variant="outline" onClick={()=>{onClick?.(`${convertDateTime(data.dateTime).hour}:${
-      convertDateTime(data.dateTime).minute
-    }`)}}>{`${convertDateTime(data.dateTime).hour}:${
-      convertDateTime(data.dateTime).minute
-    }`}</Button>
+    <Button
+      variant="outline"
+      onClick={() => {
+        onClick?.(
+          `${convertDateTime(data.dateTime).hour}:${convertDateTime(data.dateTime).minute}`
+        );
+      }}
+    >{`${convertDateTime(data.dateTime).hour}:${convertDateTime(data.dateTime).minute}`}</Button>
   );
 };
 export default ShiftTimeItem;

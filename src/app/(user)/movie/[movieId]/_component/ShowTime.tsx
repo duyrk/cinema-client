@@ -1,6 +1,6 @@
 'use client';
 
-import { Box, Stack, Text} from '@mantine/core';
+import { Box, Stack, Text } from '@mantine/core';
 import dayjs, { Dayjs } from 'dayjs';
 import 'dayjs/locale/vi';
 import React from 'react';
@@ -10,7 +10,7 @@ export interface IShowTimeData {
 }
 export interface ShowTime {
   isActive: boolean;
-  onClick?: ()=> void;
+  onClick?: () => void;
   data: IShowTimeData;
 }
 const ShowTime: React.FC<ShowTime> = (props) => {
@@ -24,19 +24,14 @@ const ShowTime: React.FC<ShowTime> = (props) => {
     return { day, month, year, dayOfWeek };
   };
   return (
-    <Box onClick={onClick} className='cursor-pointer'>
+    <Box onClick={onClick} className="cursor-pointer">
       <Stack align="center" bg={isActive ? 'red.8' : ''} px={15} py={5}>
-        <Text fw={500}>
-          Th. {convertDateTime(data.dateTime).month}
-        </Text>
+        <Text fw={500}>Th. {convertDateTime(data.dateTime).month}</Text>
         <Text className="text-3xl" fw={700}>
           {convertDateTime(data.dateTime).day}
         </Text>
-        <Text fw={500}>
-          {convertDateTime(data.dateTime).dayOfWeek}
-        </Text>
+        <Text fw={500}>{convertDateTime(data.dateTime).dayOfWeek}</Text>
       </Stack>
-    
     </Box>
   );
 };

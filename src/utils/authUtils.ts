@@ -3,8 +3,6 @@ import { CookieService } from '@services';
 
 export default class AuthUtils {
   static authKeys = [
-    'accessTokenExpiresIn',
-    'refreshTokenExpiresIn',
     'refreshToken',
     'accessToken',
   ];
